@@ -278,16 +278,16 @@
   <div class="inputs-row">
     <div class="input-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="f-capital" value="50,00,000" onchange="calcFixed()">
+      <input type="text" id="f-capital" value="50,00,000" oninput="calcFixed()">
     </div>
     <div class="input-field">
       <label>Management Fee (%age per annum)</label>
-      <input type="text" id="f-mgmt" value="2.5" onchange="calcFixed()">
+      <input type="text" id="f-mgmt" value="2.5" oninput="calcFixed()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Other Expenses (%age per annum)</label>
-      <input type="text" id="f-other" value="0.15" onchange="calcFixed()">
+      <input type="text" id="f-other" value="0.15" oninput="calcFixed()">
       <span class="unit">%</span>
     </div>
     <div class="input-field disabled">
@@ -302,7 +302,7 @@
     </div>
     <div class="input-field">
       <label>Brokerage and Transaction cost</label>
-      <input type="text" id="f-brok" value="0.20" onchange="calcFixed()">
+      <input type="text" id="f-brok" value="0.20" oninput="calcFixed()">
       <span class="unit">%</span>
     </div>
   </div>
@@ -321,11 +321,11 @@
       </tr>
       <tr>
         <th></th><th></th><th></th>
-        <th><input class="gain-input" id="f-g1" type="number" value="20" onchange="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g2" type="number" value="-20" onchange="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g3" type="number" value="10" onchange="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g4" type="number" value="-15" onchange="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g5" type="number" value="50" onchange="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g1" type="number" value="20" oninput="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g2" type="number" value="-20" oninput="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g3" type="number" value="10" oninput="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g4" type="number" value="-15" oninput="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g5" type="number" value="50" oninput="calcFixed()">%</th>
       </tr>
     </thead>
     <tbody id="fixed-tbody"></tbody>
@@ -336,31 +336,31 @@
   <div class="inputs-row">
     <div class="input-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="h-capital" value="50,00,000" onchange="calcHybrid()">
+      <input type="text" id="h-capital" value="50,00,000" oninput="calcHybrid()">
     </div>
     <div class="input-field">
       <label>Management Fee (%age per annum)</label>
-      <input type="text" id="h-mgmt" value="1" onchange="calcHybrid()">
+      <input type="text" id="h-mgmt" value="1" oninput="calcHybrid()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Other Expenses (%age per annum)</label>
-      <input type="text" id="h-other" value="0.15" onchange="calcHybrid()">
+      <input type="text" id="h-other" value="0.15" oninput="calcHybrid()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Performance Fee (%age per annum)</label>
-      <input type="text" id="h-perf" value="15" onchange="calcHybrid()">
+      <input type="text" id="h-perf" value="15" oninput="calcHybrid()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Hurdle Rate of Return (%age per annum)</label>
-      <input type="text" id="h-hurdle" value="10" onchange="calcHybrid()">
+      <input type="text" id="h-hurdle" value="10" oninput="calcHybrid()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Brokerage and Transaction cost</label>
-      <input type="text" id="h-brok" value="0.20" onchange="calcHybrid()">
+      <input type="text" id="h-brok" value="0.20" oninput="calcHybrid()">
       <span class="unit">%</span>
     </div>
   </div>
@@ -379,23 +379,22 @@
       </tr>
       <tr>
         <th></th><th></th><th></th>
-        <th><input class="gain-input" id="h-g1" type="number" value="20" onchange="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g2" type="number" value="-20" onchange="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g3" type="number" value="10" onchange="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g4" type="number" value="-15" onchange="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g5" type="number" value="50" onchange="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g1" type="number" value="20" oninput="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g2" type="number" value="-20" oninput="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g3" type="number" value="10" oninput="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g4" type="number" value="-15" oninput="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g5" type="number" value="50" oninput="calcHybrid()">%</th>
       </tr>
     </thead>
     <tbody id="hybrid-tbody"></tbody>
   </table>
 </div>
 
-<!-- Performance fee default: perf=20, hurdle=8 -->
 <div id="section-performance" class="section">
   <div class="inputs-row">
     <div class="input-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="p-capital" value="50,00,000" onchange="calcPerf()">
+      <input type="text" id="p-capital" value="50,00,000" oninput="calcPerf()">
     </div>
     <div class="input-field disabled">
       <label>Management Fee (%age per annum)</label>
@@ -404,22 +403,22 @@
     </div>
     <div class="input-field">
       <label>Other Expenses (%age per annum)</label>
-      <input type="text" id="p-other" value="0.15" onchange="calcPerf()">
+      <input type="text" id="p-other" value="0.15" oninput="calcPerf()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Performance Fee (%age per annum)</label>
-      <input type="text" id="p-perf" value="20" onchange="calcPerf()">
+      <input type="text" id="p-perf" value="20" oninput="calcPerf()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Hurdle Rate of Return (%age per annum)</label>
-      <input type="text" id="p-hurdle" value="8" onchange="calcPerf()">
+      <input type="text" id="p-hurdle" value="8" oninput="calcPerf()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Brokerage and Transaction cost</label>
-      <input type="text" id="p-brok" value="0.20" onchange="calcPerf()">
+      <input type="text" id="p-brok" value="0.20" oninput="calcPerf()">
       <span class="unit">%</span>
     </div>
   </div>
@@ -438,11 +437,11 @@
       </tr>
       <tr>
         <th></th><th></th><th></th>
-        <th><input class="gain-input" id="p-g1" type="number" value="20" onchange="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g2" type="number" value="-20" onchange="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g3" type="number" value="10" onchange="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g4" type="number" value="-15" onchange="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g5" type="number" value="50" onchange="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g1" type="number" value="20" oninput="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g2" type="number" value="-20" oninput="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g3" type="number" value="10" oninput="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g4" type="number" value="-15" oninput="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g5" type="number" value="50" oninput="calcPerf()">%</th>
       </tr>
     </thead>
     <tbody id="perf-tbody"></tbody>
