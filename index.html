@@ -615,7 +615,7 @@ function calcHybrid() {
     var xii  = ix > (x_hwm + xi) ? Math.round(ix - x_hwm - xi) : 0;
     var xiii = Math.round(xii * perfPct);
     var xiv  = xiii;
-    var xv   = xiii > 0 ? 'Yes' : 'No Performance Fees';
+    var xv   = xiii > 0 ? 'Yes' : 'No Performance Fee';
     var xvi  = Math.round(ix - xiii);
     var xvii = ((xvi / i) - 1) * 100;
     var prevHwm = (y > 0) ? results[y-1].xviii : capital;
@@ -644,7 +644,7 @@ function calcHybrid() {
     { key: 'xii',   idx: 'xii',  formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0',                  label: 'Portfolio value in excess of Hurdle Rate Return' },
     { key: 'xiii',  idx: 'xiii', formula: 'xiii = xii * d',                                                   label: 'Profit share of the PMS' },
     { key: 'xiv',   idx: 'xiv',  formula: 'xiv = xiii',                                                      label: 'Profit Share To be taken by PMS' },
-    { key: 'xv',    idx: 'xv',   formula: "xv = xiii > 0 then 'Yes' else No Performance Fees",               label: 'Is the Performance Fee charged?' },
+    { key: 'xv',    idx: 'xv',   formula: "xv = xiii > 0 then 'Yes' else No Performance Fee",               label: 'Is the Performance Fee charged?' },
     { key: 'xvi',   idx: 'xvi',  formula: 'xvi = ix - xiii',                                                 label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
     { key: 'xvii',  idx: 'xvii', formula: 'xvii = (xvi / i - 1)%',                                           label: '% Portfolio Return' },
     { key: 'xviii', idx: 'xviii',formula: "xviii = xv = 'Yes' then ix else max of (ix, i, xviii of previous year)", label: 'High Water Mark to be carried forward for next year' }
@@ -706,7 +706,7 @@ function calcPerf() {
     var xii  = ix > (x_hwm + xi) ? Math.round(ix - x_hwm - xi) : 0;
     var xiii = Math.round(xii * perfPct);
     var xiv  = xiii;
-    var xv   = xiii > 0 ? 'Yes' : 'No Performance Fees';
+    var xv   = xiii > 0 ? 'Yes' : 'No Performance Fee';
     var xvi  = Math.round(ix - xiii);
     var xvii = ((xvi / i) - 1) * 100;
     var prevHwm = (y > 0) ? results[y-1].xviii : capital;
@@ -735,7 +735,7 @@ function calcPerf() {
     { key: 'xii',   idx: 'xii',  formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0',                  label: 'Portfolio value in excess of Hurdle Rate Return' },
     { key: 'xiii',  idx: 'xiii', formula: 'xiii = xii * d',                                                   label: 'Profit share of the PMS' },
     { key: 'xiv',   idx: 'xiv',  formula: 'xiv = xiii',                                                      label: 'Profit Share To be taken by PMS' },
-    { key: 'xv',    idx: 'xv',   formula: "xv = xiii > 0 then 'Yes' else No Performance Fees",               label: 'Is the Performance Fee charged?' },
+    { key: 'xv',    idx: 'xv',   formula: "xv = xiii > 0 then 'Yes' else No Performance Fee",               label: 'Is the Performance Fee charged?' },
     { key: 'xvi',   idx: 'xvi',  formula: 'xvi = ix - xiii',                                                 label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
     { key: 'xvii',  idx: 'xvii', formula: 'xvii = (xvi / i - 1)%',                                           label: '% Portfolio Return' },
     { key: 'xviii', idx: 'xviii',formula: "xviii = xv = 'Yes' then ix else max of (ix, i, xviii of previous year)", label: 'High Water Mark to be carried forward for next year' }
