@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pmsbazaar Fee Calculator Illustration</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    background: #fff;
+    color: #333;
+    padding: 30px 40px;
+  }
+
+  h2.page-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #222;
+  }
+
+  .fee-type-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 22px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; padding-top: 18px; }
+
+  .field-group {
+    position: relative;
+    border: 1px solid #c00;
+    border-radius: 4px;
+    padding: 6px 12px 6px 12px;
+    min-width: 220px;
+  }
+
+  .field-group label {
+    position: absolute;
+    top: -9px;
+    left: 10px;
+    background: #fff;
+    padding: 0 4px;
+    font-size: 11px;
+    color: #555;
+  }
+
+  .field-group select,
+  .field-group input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    background: transparent;
+    color: #222;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .field-group select {
+    cursor: pointer;
+    padding-right: 24px;
+  }
+
+  .select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #666;
+    font-size: 12px;
+  }
+
+  .inputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .input-field {
+    position: relative;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    padding: 6px 12px;
+  }
+
+  .input-field label {
+    position: absolute;
+    top: -9px;
+    left: 10px;
+    background: #fff;
+    padding: 0 4px;
+    font-size: 11px;
+    color: #555;
+  }
+
+  .input-field input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    background: transparent;
+    color: #222;
+  }
+
+  .input-field .unit {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: #555;
+  }
+
+  .input-field.disabled {
+    background: #f5f5f5;
+  }
+
+  .input-field.disabled input {
+    color: #999;
+  }
+
+  table.fee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 28px;
+  }
+
+  table.fee-table th,
+  table.fee-table td {
+    border: 1px solid #ddd;
+    padding: 7px 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+
+  table.fee-table th {
+    background: #fff;
+    font-weight: 600;
+  }
+
+  table.fee-table th.year-header {
+    color: #c00;
+    font-weight: 600;
+  }
+
+  table.fee-table td.label-cell {
+    text-align: left;
+    background: #fff;
+    font-size: 12px;
+    color: #333;
+  }
+
+  table.fee-table td.formula-cell {
+    font-size: 11px;
+    color: #555;
+    white-space: pre-wrap;
+    background: #fff;
+  }
+
+  table.fee-table td.idx-cell {
+    font-weight: 600;
+    color: #333;
+    font-size: 11px;
+  }
+
+  .neg { color: #c00; }
+  .pos { color: #333; }
+
+  .gain-input {
+    width: 48px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    text-align: center;
+    font-size: 12px;
+    padding: 2px 4px;
+    margin-right: 2px;
+  }
+
+  .notes-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #222;
+  }
+
+  .notes-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .notes-table td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    font-size: 8px;
+    vertical-align: top;
+    color: #333;
+  }
+
+  .notes-table td:first-child {
+    width: 36px;
+    text-align: center;
+    font-weight: 600;
+    background: #fff;
+  }
+
+  .btn-calculate {
+    display: block;
+    margin: 0 auto 16px auto;
+    background: #c00;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 9px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-calculate:hover { background: #a00; }
+
+  .tab-row {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 20px;
+  }
+
+  .tab-btn {
+    border: 1px solid #c00;
+    background: #fff;
+    color: #c00;
+    padding: 7px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .tab-btn:first-child { border-radius: 4px 0 0 4px; }
+  .tab-btn:last-child { border-radius: 0 4px 4px 0; }
+  .tab-btn.active { background: #c00; color: #fff; }
+
+  /* section rule moved above */
+
+  .col-fees-label { width: 220px; }
+  .col-idx { width: 28px; }
+  .col-formula { width: 90px; }
+
+  .no-p { color: #555; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h2 class="page-title"><strong>Pmsbazaar Fee Calculator Illustration</strong></h2>
+
+<div class="fee-type-wrapper">
+  <div class="field-group" style="min-width:240px;">
+    <label>FeeType</label>
+    <select id="feeTypeSelect" onchange="switchTab(this.value)">
+      <option value="fixed">Fixed Fee Structure</option>
+      <option value="hybrid">Hybrid Fee Structure</option>
+      <option value="performance">Performance Fee Structure</option>
+    </select>
+    <span class="select-arrow">&#9660;</span>
+  </div>
+</div>
+
+<div id="section-fixed" class="section active">
+  <div class="inputs-row">
+    <div class="input-field">
+      <label>Capital Contribution (Rs.)</label>
+      <input type="text" id="f-capital" value="50,00,000" onchange="calcFixed()">
+    </div>
+    <div class="input-field">
+      <label>Management Fee (%age per annum)</label>
+      <input type="text" id="f-mgmt" value="2.5" onchange="calcFixed()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Other Expenses (%age per annum)</label>
+      <input type="text" id="f-other" value="0.15" onchange="calcFixed()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field disabled">
+      <label>Performance Fee (%age per annum)</label>
+      <input type="text" value="0" disabled>
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field disabled">
+      <label>Hurdle Rate of Return (%age per annum)</label>
+      <input type="text" value="0" disabled>
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Brokerage and Transaction cost</label>
+      <input type="text" id="f-brok" value="0.20" onchange="calcFixed()">
+      <span class="unit">%</span>
+    </div>
+  </div>
+
+  <table class="fee-table" id="fixed-table">
+    <thead>
+      <tr>
+        <th class="col-fees-label">Fees</th>
+        <th class="col-idx"></th>
+        <th class="col-formula"></th>
+        <th class="year-header">Year 1<br>Gain/Loss</th>
+        <th class="year-header">Year 2<br>Gain/Loss</th>
+        <th class="year-header">Year 3<br>Gain/Loss</th>
+        <th class="year-header">Year 4<br>Gain/Loss</th>
+        <th class="year-header">Year 5<br>Gain/Loss</th>
+      </tr>
+      <tr>
+        <th></th><th></th><th></th>
+        <th><input class="gain-input" id="f-g1" type="number" value="20" onchange="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g2" type="number" value="30" onchange="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g3" type="number" value="40" onchange="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g4" type="number" value="50" onchange="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g5" type="number" value="50" onchange="calcFixed()">%</th>
+      </tr>
+    </thead>
+    <tbody id="fixed-tbody"></tbody>
+  </table>
+</div>
+
+<div id="section-hybrid" class="section">
+  <div class="inputs-row">
+    <div class="input-field">
+      <label>Capital Contribution (Rs.)</label>
+      <input type="text" id="h-capital" value="50,00,000" onchange="calcHybrid()">
+    </div>
+    <div class="input-field">
+      <label>Management Fee (%age per annum)</label>
+      <input type="text" id="h-mgmt" value="1" onchange="calcHybrid()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Other Expenses (%age per annum)</label>
+      <input type="text" id="h-other" value="0.15" onchange="calcHybrid()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Performance Fee (%age per annum)</label>
+      <input type="text" id="h-perf" value="15" onchange="calcHybrid()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Hurdle Rate of Return (%age per annum)</label>
+      <input type="text" id="h-hurdle" value="10" onchange="calcHybrid()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Brokerage and Transaction cost</label>
+      <input type="text" id="h-brok" value="0.20" onchange="calcHybrid()">
+      <span class="unit">%</span>
+    </div>
+  </div>
+
+  <table class="fee-table" id="hybrid-table">
+    <thead>
+      <tr>
+        <th class="col-fees-label">Fees</th>
+        <th class="col-idx"></th>
+        <th class="col-formula"></th>
+        <th class="year-header">Year 1<br>Gain/Loss</th>
+        <th class="year-header">Year 2<br>Gain/Loss</th>
+        <th class="year-header">Year 3<br>Gain/Loss</th>
+        <th class="year-header">Year 4<br>Gain/Loss</th>
+        <th class="year-header">Year 5<br>Gain/Loss</th>
+      </tr>
+      <tr>
+        <th></th><th></th><th></th>
+        <th><input class="gain-input" id="h-g1" type="number" value="20" onchange="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g2" type="number" value="30" onchange="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g3" type="number" value="40" onchange="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g4" type="number" value="50" onchange="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g5" type="number" value="50" onchange="calcHybrid()">%</th>
+      </tr>
+    </thead>
+    <tbody id="hybrid-tbody"></tbody>
+  </table>
+</div>
+
+<div id="section-performance" class="section">
+  <div class="inputs-row">
+    <div class="input-field">
+      <label>Capital Contribution (Rs.)</label>
+      <input type="text" id="p-capital" value="50,00,000" onchange="calcPerf()">
+    </div>
+    <div class="input-field disabled">
+      <label>Management Fee (%age per annum)</label>
+      <input type="text" value="0" disabled>
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Other Expenses (%age per annum)</label>
+      <input type="text" id="p-other" value="0.15" onchange="calcPerf()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Performance Fee (%age per annum)</label>
+      <input type="text" id="p-perf" value="15" onchange="calcPerf()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Hurdle Rate of Return (%age per annum)</label>
+      <input type="text" id="p-hurdle" value="10" onchange="calcPerf()">
+      <span class="unit">%</span>
+    </div>
+    <div class="input-field">
+      <label>Brokerage and Transaction cost</label>
+      <input type="text" id="p-brok" value="0.20" onchange="calcPerf()">
+      <span class="unit">%</span>
+    </div>
+  </div>
+
+  <table class="fee-table" id="perf-table">
+    <thead>
+      <tr>
+        <th class="col-fees-label">Fees</th>
+        <th class="col-idx"></th>
+        <th class="col-formula"></th>
+        <th class="year-header">Year 1<br>Gain/Loss</th>
+        <th class="year-header">Year 2<br>Gain/Loss</th>
+        <th class="year-header">Year 3<br>Gain/Loss</th>
+        <th class="year-header">Year 4<br>Gain/Loss</th>
+        <th class="year-header">Year 5<br>Gain/Loss</th>
+      </tr>
+      <tr>
+        <th></th><th></th><th></th>
+        <th><input class="gain-input" id="p-g1" type="number" value="20" onchange="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g2" type="number" value="30" onchange="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g3" type="number" value="40" onchange="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g4" type="number" value="50" onchange="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g5" type="number" value="50" onchange="calcPerf()">%</th>
+      </tr>
+    </thead>
+    <tbody id="perf-tbody"></tbody>
+  </table>
+</div>
+
+<div class="notes-section">
+  <h3>Notes:</h3>
+  <table class="notes-table">
+    <strong></strong><tr><td>1</td><td>In the illustration, Management fee is assumed to be charged annually. However, the Portfolio Manager charges fee Monthly/Quarterly as defined in the Fee Schedule which is part of PMS agreement</td></tr>
+    <tr><td>2</td><td>Management Fees and Other Expenses are to be calculated on the average daily portfolio value payable on a monthly/quarterly basis at the end of each calendar month/quarter, as may be defined in Fee schedule.</td></tr>
+    <tr><td>3</td><td>Returns are assumed to be generated linearly through the year.</td></tr>
+    <tr><td>4</td><td>Other Expenses includes Account Opening charges, stamp duty /Audit Fee/ Bank charges / Fund Accounting charges / Custody Fee / demat charges or other miscellaneous expense, as may be defined in Fee schedule.</td></tr>
+    <tr><td>5</td><td>Brokerage and transaction cost for the illustration purpose is charged on the Average AUM. However, Brokerage and Transaction cost are charged on basis the actuals trades.</td></tr>
+    <tr><td>6</td><td>All Fees and charges are subject to GST.</td></tr>
+    <tr><td>7</td><td>For this illustration, High Water Mark for the 1st Year is the Capital invested and from second year onwards if performance fee is charged, it's the year end closing value after all charges and fees, else it remains the same, if applicable</td></tr>
+    <tr><td>8</td><td>For this illustration, Hurdle rate is calculated on Higher of (HWM or previous year closing capital). However, in actual Hurdle Rate of return is defined in the Fee Schedule and may differ from this illustration, if applicable</td></tr>
+    <tr><td>9</td><td>Hurdle rate is prorated in case the performance fee period is less than 1 year OR if there are inflow/outflows from the portfolio during the computation period, if applicable</td></tr>
+    <tr><td>10</td><td>If applicable, the Performance linked fee shall be charged on the basis of high water mark principle over the life of the investment. Value of the portfolio shall be taken to be the value on the date when the performance fee was charged. The performance linked fee shall be charged only on increase in portfolio value in excess of previously achieved high water mark and performance fees will be charges on annual basis or at the time of redemption, as applicable.</td></tr>
+    <tr><td>11</td><td>Average daily portfolio value means the value of the portfolio of each client determined in accordance with the relevant provisions of the agreement executed with the client and includes both realized and unrealized gains/ losses.</td></tr>
+    <tr><td>12</td><td>The "Profit share of the PMS" is equal to "Profit Share To be taken by PMS" with an assumption that the client is on direct mode.</td></tr>
+    <tr><td>13</td><td>In addition to the above expense/fee, exit load shall be charged on the Post Performance fee AUM, if applicable as per the fee schedule.</td></tr>
+  </table>
+</div>
+
+<script>
+function parseAmt(str) {
+  if (typeof str === 'number') return str;
+  return parseFloat(String(str).replace(/,/g, '')) || 0;
+}
+
+function fmtNum(n) {
+  if (n === 0) return '0';
+  var neg = n < 0;
+  var abs = Math.abs(Math.round(n));
+  var s = String(abs);
+  var result = '';
+  if (s.length <= 3) {
+    result = s;
+  } else {
+    result = s.slice(-3);
+    s = s.slice(0, -3);
+    while (s.length > 2) {
+      result = s.slice(-2) + ',' + result;
+      s = s.slice(0, -2);
+    }
+    result = s + ',' + result;
+  }
+  return (neg ? '-' : '') + result;
+}
+
+function fmtPct(n) {
+  return (n >= 0 ? '' : '') + n.toFixed(2) + '%';
+}
+
+function cell(val, isNeg) {
+  var n = Math.round(val);
+  var cls = (n < 0 || isNeg) ? 'neg' : 'pos';
+  return '<td class="' + cls + '">' + fmtNum(n) + '</td>';
+}
+
+function switchTab(val) {
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('section-' + val).classList.add('active');
+}
+
+document.getElementById('feeTypeSelect').addEventListener('change', function() {
+  switchTab(this.value);
+});
+
+function calcFixed() {
+  var capital = parseAmt(document.getElementById('f-capital').value);
+  var mgmtPct = parseFloat(document.getElementById('f-mgmt').value) / 100;
+  var otherPct = parseFloat(document.getElementById('f-other').value) / 100;
+  var brokPct = parseFloat(document.getElementById('f-brok').value) / 100;
+  var gains = [
+    parseFloat(document.getElementById('f-g1').value) / 100,
+    parseFloat(document.getElementById('f-g2').value) / 100,
+    parseFloat(document.getElementById('f-g3').value) / 100,
+    parseFloat(document.getElementById('f-g4').value) / 100,
+    parseFloat(document.getElementById('f-g5').value) / 100
+  ];
+
+  var rows = [];
+  var i_val = capital;
+  for (var y = 0; y < 5; y++) {
+    var i = i_val;
+    var ii = i * gains[y];
+    var iii = i + ii;
+    var iv = (iii + i) / 2;
+    var v = -Math.abs(iv * otherPct);
+    var vi = -Math.abs(iv * brokPct);
+    var vii = -Math.abs((iv + v + vi) * mgmtPct);
+    var viii = v + vi + vii;
+    var ix = iii + viii;
+    var x = (ix / i - 1) * 100;
+
+    rows.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x });
+    i_val = ix;
+  }
+
+  var tbody = document.getElementById('fixed-tbody');
+  tbody.innerHTML = '';
+
+  var labels = [
+    ['i', 'i = a', 'Capital Contributed /Assets under Management'],
+    ['ii', 'ii = i * Scenario', 'Gain / (Loss) on Investment based on the Scenario'],
+    ['iii', 'iii = i + ii', 'Gross Value of the Portfolio at the end of the year'],
+    ['iv', 'iv = (iii + i) / 2', 'Daily Weighted Average assets under management'],
+    ['v', 'v = iv * c', 'Other Expense'],
+    ['vi', 'vi = iv * f', 'Brokerage and Transaction cost'],
+    ['vii', 'vii - (iv + v + vi) * b', 'Management Fees'],
+    ['viii', 'viii = v + vi + vii', 'Total charges during the year (Sum of v, vi and vii)'],
+    ['ix', 'ix=iii-viii', 'Net value of the Portfolio at the end of the year after all fees and expenses'],
+    ['x', 'x=((ix/i)-1)%', '% Portfolio Return']
+  ];
+
+  var keys = ['i','ii','iii','iv','v','vi','vii','viii','ix','x'];
+
+  for (var r = 0; r < labels.length; r++) {
+    var tr = document.createElement('tr');
+    var pctRow = (r === 9);
+    tr.innerHTML = '<td class="label-cell">' + labels[r][2] + '</td>' +
+      '<td class="idx-cell">' + labels[r][0] + '</td>' +
+      '<td class="formula-cell" style="font-size:10px;color:#777;">' + labels[r][1] + '</td>';
+    for (var y = 0; y < 5; y++) {
+      var val = rows[y][keys[r]];
+      if (pctRow) {
+        tr.innerHTML += '<td class="' + (val < 0 ? 'neg' : 'pos') + '">' + fmtPct(val) + '</td>';
+      } else {
+        tr.innerHTML += cell(val, val < 0);
+      }
+    }
+    tbody.appendChild(tr);
+  }
+}
+
+function calcHybrid() {
+  var capital = parseAmt(document.getElementById('h-capital').value);
+  var mgmtPct = parseFloat(document.getElementById('h-mgmt').value) / 100;
+  var otherPct = parseFloat(document.getElementById('h-other').value) / 100;
+  var brokPct = parseFloat(document.getElementById('h-brok').value) / 100;
+  var perfPct = parseFloat(document.getElementById('h-perf').value) / 100;
+  var hurdlePct = parseFloat(document.getElementById('h-hurdle').value) / 100;
+  var gains = [
+    parseFloat(document.getElementById('h-g1').value) / 100,
+    parseFloat(document.getElementById('h-g2').value) / 100,
+    parseFloat(document.getElementById('h-g3').value) / 100,
+    parseFloat(document.getElementById('h-g4').value) / 100,
+    parseFloat(document.getElementById('h-g5').value) / 100
+  ];
+
+  var hwm = capital;
+  var prevClose = capital;
+  var results = [];
+
+  for (var y = 0; y < 5; y++) {
+    var i = prevClose;
+    var ii = i * gains[y];
+    var iii = i + ii;
+    var iv = (iii + i) / 2;
+    var v = -Math.abs(iv * otherPct);
+    var vi = -Math.abs(iv * brokPct);
+    var vii = -Math.abs((iv + v + vi) * mgmtPct);
+    var viii = v + vi + vii;
+    var ix = iii + viii;
+    var x_hwm = (y === 0) ? capital : hwm;
+    var xi = Math.max(x_hwm, i) * hurdlePct;
+    var xii = ix > (x_hwm + xi) ? ix - x_hwm - xi : 0;
+    var xiii = xii * perfPct;
+    var xiv = xiii;
+    var xv = xiii > 0 ? 'Yes' : 'No Performance Fees';
+    var xvi = ix - xiii;
+    var xvii = (xvi / i - 1) * 100;
+    var xviii = (xv === 'Yes') ? ix : Math.max(x_hwm, i, (y > 0 ? results[y-1].xviii : capital));
+
+    results.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x_hwm, xi, xii, xiii, xiv, xv, xvi, xvii, xviii });
+
+    hwm = xviii;
+    prevClose = xvi;
+  }
+
+  var tbody = document.getElementById('hybrid-tbody');
+  tbody.innerHTML = '';
+
+  var defs = [
+    { key: 'i', idx: 'i', formula: 'i = a', label: 'Capital Contributed /Assets under Management' },
+    { key: 'ii', idx: 'ii', formula: 'ii = i * Scenario', label: 'Gain / (Loss) on Investment based on the Scenario' },
+    { key: 'iii', idx: 'iii', formula: 'iii = i + ii', label: 'Gross Value of the Portfolio at the end of the year' },
+    { key: 'iv', idx: 'iv', formula: 'iv = (iii + i) / 2', label: 'Daily Weighted Average assets under management' },
+    { key: 'v', idx: 'v', formula: 'v = iv * c', label: 'Other Expense' },
+    { key: 'vi', idx: 'vi', formula: 'vi = iv * f', label: 'Brokerage and Transaction cost' },
+    { key: 'vii', idx: 'vii', formula: 'vii - (iv + v + vi) * b', label: 'Management Fees' },
+    { key: 'viii', idx: 'viii', formula: 'viii = v + vi + vii', label: 'Total charges during the year (Sum of v, vi and vii)' },
+    { key: 'ix', idx: 'ix', formula: 'ix = iii + viii', label: 'Value of the Portfolio before Performance fee' },
+    { key: 'x_hwm', idx: 'x', formula: 'x = For 1st Year its i and for consecutive years its xviii of previous year', label: 'High Water Mark Value (HWM)' },
+    { key: 'xi', idx: 'xi', formula: 'xi = Max of (x, i) * e', label: 'Hurdle Rate of return' },
+    { key: 'xii', idx: 'xii', formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0', label: 'Portfolio value in excess of Hurdle Rate Return' },
+    { key: 'xiii', idx: 'xiii', formula: 'xiii = xii * d', label: 'Profit share of the PMS' },
+    { key: 'xiv', idx: 'xiv', formula: 'xiv = xiii', label: 'Profit Share To be taken by PMS' },
+    { key: 'xv', idx: 'xv', formula: 'xv = xiii > 0 then \'Yes\' else No Performance Fees', label: 'Is the Performance Fee charged?' },
+    { key: 'xvi', idx: 'xvi', formula: 'xvi = ix - xiii', label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
+    { key: 'xvii', idx: 'xvii', formula: 'xvii = (xvi / i - 1)%', label: '% Portfolio Return' },
+    { key: 'xviii', idx: 'xviii', formula: 'xviii = xv = \'Yes\' then ix else max of (ix, i, xviii of previous year)', label: 'High Water Mark to be carried forward for next year' }
+  ];
+
+  for (var r = 0; r < defs.length; r++) {
+    var d = defs[r];
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="label-cell">' + d.label + '</td>' +
+      '<td class="idx-cell">' + d.idx + '</td>' +
+      '<td class="formula-cell" style="font-size:10px;color:#777;">' + d.formula + '</td>';
+    for (var y = 0; y < 5; y++) {
+      var val = results[y][d.key];
+      if (d.key === 'xvii') {
+        tr.innerHTML += '<td class="' + (val < 0 ? 'neg' : 'pos') + '">' + fmtPct(val) + '</td>';
+      } else if (d.key === 'xv') {
+        tr.innerHTML += '<td class="' + (val === 'Yes' ? 'pos' : 'no-p') + '">' + val + '</td>';
+      } else if (typeof val === 'number') {
+        tr.innerHTML += cell(val, val < 0);
+      } else {
+        tr.innerHTML += '<td>' + val + '</td>';
+      }
+    }
+    tbody.appendChild(tr);
+  }
+}
+
+function calcPerf() {
+  var capital = parseAmt(document.getElementById('p-capital').value);
+  var otherPct = parseFloat(document.getElementById('p-other').value) / 100;
+  var brokPct = parseFloat(document.getElementById('p-brok').value) / 100;
+  var perfPct = parseFloat(document.getElementById('p-perf').value) / 100;
+  var hurdlePct = parseFloat(document.getElementById('p-hurdle').value) / 100;
+  var gains = [
+    parseFloat(document.getElementById('p-g1').value) / 100,
+    parseFloat(document.getElementById('p-g2').value) / 100,
+    parseFloat(document.getElementById('p-g3').value) / 100,
+    parseFloat(document.getElementById('p-g4').value) / 100,
+    parseFloat(document.getElementById('p-g5').value) / 100
+  ];
+
+  var hwm = capital;
+  var prevClose = capital;
+  var results = [];
+
+  for (var y = 0; y < 5; y++) {
+    var i = prevClose;
+    var ii = i * gains[y];
+    var iii = i + ii;
+    var iv = (iii + i) / 2;
+    var v = -Math.abs(iv * otherPct);
+    var vi = -Math.abs(iv * brokPct);
+    var vii = 0;
+    var viii = v + vi + vii;
+    var ix = iii + viii;
+    var x_hwm = (y === 0) ? capital : hwm;
+    var xi = Math.max(x_hwm, i) * hurdlePct;
+    var xii = ix > (x_hwm + xi) ? ix - x_hwm - xi : 0;
+    var xiii = xii * perfPct;
+    var xiv = xiii;
+    var xv = xiii > 0 ? 'Yes' : 'No Performance Fees';
+    var xvi = ix - xiii;
+    var xvii = (xvi / i - 1) * 100;
+    var xviii = (xv === 'Yes') ? ix : Math.max(x_hwm, i, (y > 0 ? results[y-1].xviii : capital));
+
+    results.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x_hwm, xi, xii, xiii, xiv, xv, xvi, xvii, xviii });
+
+    hwm = xviii;
+    prevClose = xvi;
+  }
+
+  var tbody = document.getElementById('perf-tbody');
+  tbody.innerHTML = '';
+
+  var defs = [
+    { key: 'i', idx: 'i', formula: 'i = a', label: 'Capital Contributed /Assets under Management' },
+    { key: 'ii', idx: 'ii', formula: 'ii = i * Scenario', label: 'Gain / (Loss) on Investment based on the Scenario' },
+    { key: 'iii', idx: 'iii', formula: 'iii = i + ii', label: 'Gross Value of the Portfolio at the end of the year' },
+    { key: 'iv', idx: 'iv', formula: 'iv = (iii + i) / 2', label: 'Daily Weighted Average assets under management' },
+    { key: 'v', idx: 'v', formula: 'v = iv * c', label: 'Other Expense' },
+    { key: 'vi', idx: 'vi', formula: 'vi = iv * f', label: 'Brokerage and Transaction cost' },
+    { key: 'vii', idx: 'vii', formula: 'vii - (iv + v + vi) * b', label: 'Management Fees' },
+    { key: 'viii', idx: 'viii', formula: 'viii = v + vi + vii', label: 'Total charges during the year (Sum of v, vi and vii)' },
+    { key: 'ix', idx: 'ix', formula: 'ix = iii + viii', label: 'Value of the Portfolio before Performance fee' },
+    { key: 'x_hwm', idx: 'x', formula: 'x = For 1st Year its i and for consecutive years its xviii of previous year', label: 'High Water Mark Value (HWM)' },
+    { key: 'xi', idx: 'xi', formula: 'xi = Max of (x, i) * e', label: 'Hurdle Rate of return' },
+    { key: 'xii', idx: 'xii', formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0', label: 'Portfolio value in excess of Hurdle Rate Return' },
+    { key: 'xiii', idx: 'xiii', formula: 'xiii = xii * d', label: 'Profit share of the PMS' },
+    { key: 'xiv', idx: 'xiv', formula: 'xiv = xiii', label: 'Profit Share To be taken by PMS' },
+    { key: 'xv', idx: 'xv', formula: 'xv = xiii > 0 then \'Yes\' else No Performance Fees', label: 'Is the Performance Fee charged?' },
+    { key: 'xvi', idx: 'xvi', formula: 'xvi = ix - xiii', label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
+    { key: 'xvii', idx: 'xvii', formula: 'xvii = (xvi / i - 1)%', label: '% Portfolio Return' },
+    { key: 'xviii', idx: 'xviii', formula: 'xviii = xv = \'Yes\' then ix else max of (ix, i, xviii of previous year)', label: 'High Water Mark to be carried forward for next year' }
+  ];
+
+  for (var r = 0; r < defs.length; r++) {
+    var d = defs[r];
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="label-cell">' + d.label + '</td>' +
+      '<td class="idx-cell">' + d.idx + '</td>' +
+      '<td class="formula-cell" style="font-size:10px;color:#777;">' + d.formula + '</td>';
+    for (var y = 0; y < 5; y++) {
+      var val = results[y][d.key];
+      if (d.key === 'xvii') {
+        tr.innerHTML += '<td class="' + (val < 0 ? 'neg' : 'pos') + '">' + fmtPct(val) + '</td>';
+      } else if (d.key === 'xv') {
+        tr.innerHTML += '<td class="' + (val === 'Yes' ? 'pos' : 'no-p') + '">' + val + '</td>';
+      } else if (typeof val === 'number') {
+        tr.innerHTML += cell(val, val < 0);
+      } else {
+        tr.innerHTML += '<td>' + val + '</td>';
+      }
+    }
+    tbody.appendChild(tr);
+  }
+}
+
+calcFixed();
+calcHybrid();
+calcPerf();
+</script>
+</body>
+</html>
