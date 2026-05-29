@@ -251,8 +251,6 @@
   .tab-btn:last-child { border-radius: 0 4px 4px 0; }
   .tab-btn.active { background: #c00; color: #fff; }
 
-  /* section rule moved above */
-
   .col-fees-label { width: 220px; }
   .col-idx { width: 28px; }
   .col-formula { width: 90px; }
@@ -324,9 +322,9 @@
       <tr>
         <th></th><th></th><th></th>
         <th><input class="gain-input" id="f-g1" type="number" value="20" onchange="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g2" type="number" value="30" onchange="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g3" type="number" value="40" onchange="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g4" type="number" value="50" onchange="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g2" type="number" value="-20" onchange="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g3" type="number" value="10" onchange="calcFixed()">%</th>
+        <th><input class="gain-input" id="f-g4" type="number" value="-15" onchange="calcFixed()">%</th>
         <th><input class="gain-input" id="f-g5" type="number" value="50" onchange="calcFixed()">%</th>
       </tr>
     </thead>
@@ -382,9 +380,9 @@
       <tr>
         <th></th><th></th><th></th>
         <th><input class="gain-input" id="h-g1" type="number" value="20" onchange="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g2" type="number" value="30" onchange="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g3" type="number" value="40" onchange="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g4" type="number" value="50" onchange="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g2" type="number" value="-20" onchange="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g3" type="number" value="10" onchange="calcHybrid()">%</th>
+        <th><input class="gain-input" id="h-g4" type="number" value="-15" onchange="calcHybrid()">%</th>
         <th><input class="gain-input" id="h-g5" type="number" value="50" onchange="calcHybrid()">%</th>
       </tr>
     </thead>
@@ -392,6 +390,7 @@
   </table>
 </div>
 
+<!-- Performance fee default: perf=20, hurdle=8 -->
 <div id="section-performance" class="section">
   <div class="inputs-row">
     <div class="input-field">
@@ -410,12 +409,12 @@
     </div>
     <div class="input-field">
       <label>Performance Fee (%age per annum)</label>
-      <input type="text" id="p-perf" value="15" onchange="calcPerf()">
+      <input type="text" id="p-perf" value="20" onchange="calcPerf()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
       <label>Hurdle Rate of Return (%age per annum)</label>
-      <input type="text" id="p-hurdle" value="10" onchange="calcPerf()">
+      <input type="text" id="p-hurdle" value="8" onchange="calcPerf()">
       <span class="unit">%</span>
     </div>
     <div class="input-field">
@@ -440,9 +439,9 @@
       <tr>
         <th></th><th></th><th></th>
         <th><input class="gain-input" id="p-g1" type="number" value="20" onchange="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g2" type="number" value="30" onchange="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g3" type="number" value="40" onchange="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g4" type="number" value="50" onchange="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g2" type="number" value="-20" onchange="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g3" type="number" value="10" onchange="calcPerf()">%</th>
+        <th><input class="gain-input" id="p-g4" type="number" value="-15" onchange="calcPerf()">%</th>
         <th><input class="gain-input" id="p-g5" type="number" value="50" onchange="calcPerf()">%</th>
       </tr>
     </thead>
@@ -496,7 +495,7 @@ function fmtNum(n) {
 }
 
 function fmtPct(n) {
-  return (n >= 0 ? '' : '') + n.toFixed(2) + '%';
+  return n.toFixed(2) + '%';
 }
 
 function cell(val, isNeg) {
@@ -530,16 +529,16 @@ function calcFixed() {
   var rows = [];
   var i_val = capital;
   for (var y = 0; y < 5; y++) {
-    var i = i_val;
-    var ii = i * gains[y];
-    var iii = i + ii;
-    var iv = (iii + i) / 2;
-    var v = -Math.abs(iv * otherPct);
-    var vi = -Math.abs(iv * brokPct);
-    var vii = -Math.abs((iv + v + vi) * mgmtPct);
-    var viii = v + vi + vii;
-    var ix = iii + viii;
-    var x = (ix / i - 1) * 100;
+    var i   = Math.round(i_val);
+    var ii  = Math.round(i * gains[y]);
+    var iii = Math.round(i + ii);
+    var iv  = Math.round((iii + i) / 2);
+    var v   = -Math.abs(Math.round(iv * otherPct));
+    var vi  = -Math.abs(Math.round(iv * brokPct));
+    var vii = -Math.abs(Math.round((iv + v + vi) * mgmtPct));
+    var viii = Math.round(v + vi + vii);
+    var ix  = Math.round(iii + viii);
+    var x   = ((ix / i) - 1) * 100;
 
     rows.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x });
     i_val = ix;
@@ -549,16 +548,16 @@ function calcFixed() {
   tbody.innerHTML = '';
 
   var labels = [
-    ['i', 'i = a', 'Capital Contributed /Assets under Management'],
-    ['ii', 'ii = i * Scenario', 'Gain / (Loss) on Investment based on the Scenario'],
-    ['iii', 'iii = i + ii', 'Gross Value of the Portfolio at the end of the year'],
-    ['iv', 'iv = (iii + i) / 2', 'Daily Weighted Average assets under management'],
-    ['v', 'v = iv * c', 'Other Expense'],
-    ['vi', 'vi = iv * f', 'Brokerage and Transaction cost'],
-    ['vii', 'vii - (iv + v + vi) * b', 'Management Fees'],
-    ['viii', 'viii = v + vi + vii', 'Total charges during the year (Sum of v, vi and vii)'],
-    ['ix', 'ix=iii-viii', 'Net value of the Portfolio at the end of the year after all fees and expenses'],
-    ['x', 'x=((ix/i)-1)%', '% Portfolio Return']
+    ['i',    'i = a',                    'Capital Contributed /Assets under Management'],
+    ['ii',   'ii = i * Scenario',        'Gain / (Loss) on Investment based on the Scenario'],
+    ['iii',  'iii = i + ii',             'Gross Value of the Portfolio at the end of the year'],
+    ['iv',   'iv = (iii + i) / 2',       'Daily Weighted Average assets under management'],
+    ['v',    'v = iv * c',               'Other Expense'],
+    ['vi',   'vi = iv * f',              'Brokerage and Transaction cost'],
+    ['vii',  'vii - (iv + v + vi) * b',  'Management Fees'],
+    ['viii', 'viii = v + vi + vii',      'Total charges during the year (Sum of v, vi and vii)'],
+    ['ix',   'ix=iii-viii',              'Net value of the Portfolio at the end of the year after all fees and expenses'],
+    ['x',    'x=((ix/i)-1)%',           '% Portfolio Return']
   ];
 
   var keys = ['i','ii','iii','iv','v','vi','vii','viii','ix','x'];
@@ -582,11 +581,11 @@ function calcFixed() {
 }
 
 function calcHybrid() {
-  var capital = parseAmt(document.getElementById('h-capital').value);
-  var mgmtPct = parseFloat(document.getElementById('h-mgmt').value) / 100;
+  var capital  = parseAmt(document.getElementById('h-capital').value);
+  var mgmtPct  = parseFloat(document.getElementById('h-mgmt').value) / 100;
   var otherPct = parseFloat(document.getElementById('h-other').value) / 100;
-  var brokPct = parseFloat(document.getElementById('h-brok').value) / 100;
-  var perfPct = parseFloat(document.getElementById('h-perf').value) / 100;
+  var brokPct  = parseFloat(document.getElementById('h-brok').value) / 100;
+  var perfPct  = parseFloat(document.getElementById('h-perf').value) / 100;
   var hurdlePct = parseFloat(document.getElementById('h-hurdle').value) / 100;
   var gains = [
     parseFloat(document.getElementById('h-g1').value) / 100,
@@ -601,27 +600,28 @@ function calcHybrid() {
   var results = [];
 
   for (var y = 0; y < 5; y++) {
-    var i = prevClose;
-    var ii = i * gains[y];
-    var iii = i + ii;
-    var iv = (iii + i) / 2;
-    var v = -Math.abs(iv * otherPct);
-    var vi = -Math.abs(iv * brokPct);
-    var vii = -Math.abs((iv + v + vi) * mgmtPct);
-    var viii = v + vi + vii;
-    var ix = iii + viii;
+    var i    = Math.round(prevClose);
+    var ii   = Math.round(i * gains[y]);
+    var iii  = Math.round(i + ii);
+    var iv   = Math.round((iii + i) / 2);
+    var v    = -Math.abs(Math.round(iv * otherPct));
+    var vi   = -Math.abs(Math.round(iv * brokPct));
+    var vii  = -Math.abs(Math.round((iv + v + vi) * mgmtPct));
+    var viii = Math.round(v + vi + vii);
+    var ix   = Math.round(iii + viii);
     var x_hwm = (y === 0) ? capital : hwm;
-    var xi = Math.max(x_hwm, i) * hurdlePct;
-    var xii = ix > (x_hwm + xi) ? ix - x_hwm - xi : 0;
-    var xiii = xii * perfPct;
-    var xiv = xiii;
-    var xv = xiii > 0 ? 'Yes' : 'No Performance Fees';
-    var xvi = ix - xiii;
-    var xvii = (xvi / i - 1) * 100;
-    var xviii = (xv === 'Yes') ? ix : Math.max(x_hwm, i, (y > 0 ? results[y-1].xviii : capital));
+    x_hwm = Math.round(x_hwm);
+    var xi   = Math.round(Math.max(x_hwm, i) * hurdlePct);
+    var xii  = ix > (x_hwm + xi) ? Math.round(ix - x_hwm - xi) : 0;
+    var xiii = Math.round(xii * perfPct);
+    var xiv  = xiii;
+    var xv   = xiii > 0 ? 'Yes' : 'No Performance Fees';
+    var xvi  = Math.round(ix - xiii);
+    var xvii = ((xvi / i) - 1) * 100;
+    var prevHwm = (y > 0) ? results[y-1].xviii : capital;
+    var xviii = (xv === 'Yes') ? ix : Math.max(ix, i, prevHwm);
 
     results.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x_hwm, xi, xii, xiii, xiv, xv, xvi, xvii, xviii });
-
     hwm = xviii;
     prevClose = xvi;
   }
@@ -630,24 +630,24 @@ function calcHybrid() {
   tbody.innerHTML = '';
 
   var defs = [
-    { key: 'i', idx: 'i', formula: 'i = a', label: 'Capital Contributed /Assets under Management' },
-    { key: 'ii', idx: 'ii', formula: 'ii = i * Scenario', label: 'Gain / (Loss) on Investment based on the Scenario' },
-    { key: 'iii', idx: 'iii', formula: 'iii = i + ii', label: 'Gross Value of the Portfolio at the end of the year' },
-    { key: 'iv', idx: 'iv', formula: 'iv = (iii + i) / 2', label: 'Daily Weighted Average assets under management' },
-    { key: 'v', idx: 'v', formula: 'v = iv * c', label: 'Other Expense' },
-    { key: 'vi', idx: 'vi', formula: 'vi = iv * f', label: 'Brokerage and Transaction cost' },
-    { key: 'vii', idx: 'vii', formula: 'vii - (iv + v + vi) * b', label: 'Management Fees' },
-    { key: 'viii', idx: 'viii', formula: 'viii = v + vi + vii', label: 'Total charges during the year (Sum of v, vi and vii)' },
-    { key: 'ix', idx: 'ix', formula: 'ix = iii + viii', label: 'Value of the Portfolio before Performance fee' },
-    { key: 'x_hwm', idx: 'x', formula: 'x = For 1st Year its i and for consecutive years its xviii of previous year', label: 'High Water Mark Value (HWM)' },
-    { key: 'xi', idx: 'xi', formula: 'xi = Max of (x, i) * e', label: 'Hurdle Rate of return' },
-    { key: 'xii', idx: 'xii', formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0', label: 'Portfolio value in excess of Hurdle Rate Return' },
-    { key: 'xiii', idx: 'xiii', formula: 'xiii = xii * d', label: 'Profit share of the PMS' },
-    { key: 'xiv', idx: 'xiv', formula: 'xiv = xiii', label: 'Profit Share To be taken by PMS' },
-    { key: 'xv', idx: 'xv', formula: 'xv = xiii > 0 then \'Yes\' else No Performance Fees', label: 'Is the Performance Fee charged?' },
-    { key: 'xvi', idx: 'xvi', formula: 'xvi = ix - xiii', label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
-    { key: 'xvii', idx: 'xvii', formula: 'xvii = (xvi / i - 1)%', label: '% Portfolio Return' },
-    { key: 'xviii', idx: 'xviii', formula: 'xviii = xv = \'Yes\' then ix else max of (ix, i, xviii of previous year)', label: 'High Water Mark to be carried forward for next year' }
+    { key: 'i',     idx: 'i',     formula: 'i = a',                                                           label: 'Capital Contributed /Assets under Management' },
+    { key: 'ii',    idx: 'ii',    formula: 'ii = i * Scenario',                                               label: 'Gain / (Loss) on Investment based on the Scenario' },
+    { key: 'iii',   idx: 'iii',   formula: 'iii = i + ii',                                                    label: 'Gross Value of the Portfolio at the end of the year' },
+    { key: 'iv',    idx: 'iv',    formula: 'iv = (iii + i) / 2',                                              label: 'Daily Weighted Average assets under management' },
+    { key: 'v',     idx: 'v',     formula: 'v = iv * c',                                                      label: 'Other Expense' },
+    { key: 'vi',    idx: 'vi',    formula: 'vi = iv * f',                                                     label: 'Brokerage and Transaction cost' },
+    { key: 'vii',   idx: 'vii',   formula: 'vii - (iv + v + vi) * b',                                        label: 'Management Fees' },
+    { key: 'viii',  idx: 'viii',  formula: 'viii = v + vi + vii',                                             label: 'Total charges during the year (Sum of v, vi and vii)' },
+    { key: 'ix',    idx: 'ix',    formula: 'ix = iii + viii',                                                 label: 'Value of the Portfolio before Performance fee' },
+    { key: 'x_hwm', idx: 'x',    formula: 'x = For 1st Year its i and for consecutive years its xviii of previous year', label: 'High Water Mark Value (HWM)' },
+    { key: 'xi',    idx: 'xi',    formula: 'xi = Max of (x, i) * e',                                         label: 'Hurdle Rate of return' },
+    { key: 'xii',   idx: 'xii',  formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0',                  label: 'Portfolio value in excess of Hurdle Rate Return' },
+    { key: 'xiii',  idx: 'xiii', formula: 'xiii = xii * d',                                                   label: 'Profit share of the PMS' },
+    { key: 'xiv',   idx: 'xiv',  formula: 'xiv = xiii',                                                      label: 'Profit Share To be taken by PMS' },
+    { key: 'xv',    idx: 'xv',   formula: "xv = xiii > 0 then 'Yes' else No Performance Fees",               label: 'Is the Performance Fee charged?' },
+    { key: 'xvi',   idx: 'xvi',  formula: 'xvi = ix - xiii',                                                 label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
+    { key: 'xvii',  idx: 'xvii', formula: 'xvii = (xvi / i - 1)%',                                           label: '% Portfolio Return' },
+    { key: 'xviii', idx: 'xviii',formula: "xviii = xv = 'Yes' then ix else max of (ix, i, xviii of previous year)", label: 'High Water Mark to be carried forward for next year' }
   ];
 
   for (var r = 0; r < defs.length; r++) {
@@ -673,10 +673,10 @@ function calcHybrid() {
 }
 
 function calcPerf() {
-  var capital = parseAmt(document.getElementById('p-capital').value);
+  var capital  = parseAmt(document.getElementById('p-capital').value);
   var otherPct = parseFloat(document.getElementById('p-other').value) / 100;
-  var brokPct = parseFloat(document.getElementById('p-brok').value) / 100;
-  var perfPct = parseFloat(document.getElementById('p-perf').value) / 100;
+  var brokPct  = parseFloat(document.getElementById('p-brok').value) / 100;
+  var perfPct  = parseFloat(document.getElementById('p-perf').value) / 100;
   var hurdlePct = parseFloat(document.getElementById('p-hurdle').value) / 100;
   var gains = [
     parseFloat(document.getElementById('p-g1').value) / 100,
@@ -691,27 +691,28 @@ function calcPerf() {
   var results = [];
 
   for (var y = 0; y < 5; y++) {
-    var i = prevClose;
-    var ii = i * gains[y];
-    var iii = i + ii;
-    var iv = (iii + i) / 2;
-    var v = -Math.abs(iv * otherPct);
-    var vi = -Math.abs(iv * brokPct);
-    var vii = 0;
-    var viii = v + vi + vii;
-    var ix = iii + viii;
+    var i    = Math.round(prevClose);
+    var ii   = Math.round(i * gains[y]);
+    var iii  = Math.round(i + ii);
+    var iv   = Math.round((iii + i) / 2);
+    var v    = -Math.abs(Math.round(iv * otherPct));
+    var vi   = -Math.abs(Math.round(iv * brokPct));
+    var vii  = 0;
+    var viii = Math.round(v + vi + vii);
+    var ix   = Math.round(iii + viii);
     var x_hwm = (y === 0) ? capital : hwm;
-    var xi = Math.max(x_hwm, i) * hurdlePct;
-    var xii = ix > (x_hwm + xi) ? ix - x_hwm - xi : 0;
-    var xiii = xii * perfPct;
-    var xiv = xiii;
-    var xv = xiii > 0 ? 'Yes' : 'No Performance Fees';
-    var xvi = ix - xiii;
-    var xvii = (xvi / i - 1) * 100;
-    var xviii = (xv === 'Yes') ? ix : Math.max(x_hwm, i, (y > 0 ? results[y-1].xviii : capital));
+    x_hwm = Math.round(x_hwm);
+    var xi   = Math.round(Math.max(x_hwm, i) * hurdlePct);
+    var xii  = ix > (x_hwm + xi) ? Math.round(ix - x_hwm - xi) : 0;
+    var xiii = Math.round(xii * perfPct);
+    var xiv  = xiii;
+    var xv   = xiii > 0 ? 'Yes' : 'No Performance Fees';
+    var xvi  = Math.round(ix - xiii);
+    var xvii = ((xvi / i) - 1) * 100;
+    var prevHwm = (y > 0) ? results[y-1].xviii : capital;
+    var xviii = (xv === 'Yes') ? ix : Math.max(ix, i, prevHwm);
 
     results.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x_hwm, xi, xii, xiii, xiv, xv, xvi, xvii, xviii });
-
     hwm = xviii;
     prevClose = xvi;
   }
@@ -720,24 +721,24 @@ function calcPerf() {
   tbody.innerHTML = '';
 
   var defs = [
-    { key: 'i', idx: 'i', formula: 'i = a', label: 'Capital Contributed /Assets under Management' },
-    { key: 'ii', idx: 'ii', formula: 'ii = i * Scenario', label: 'Gain / (Loss) on Investment based on the Scenario' },
-    { key: 'iii', idx: 'iii', formula: 'iii = i + ii', label: 'Gross Value of the Portfolio at the end of the year' },
-    { key: 'iv', idx: 'iv', formula: 'iv = (iii + i) / 2', label: 'Daily Weighted Average assets under management' },
-    { key: 'v', idx: 'v', formula: 'v = iv * c', label: 'Other Expense' },
-    { key: 'vi', idx: 'vi', formula: 'vi = iv * f', label: 'Brokerage and Transaction cost' },
-    { key: 'vii', idx: 'vii', formula: 'vii - (iv + v + vi) * b', label: 'Management Fees' },
-    { key: 'viii', idx: 'viii', formula: 'viii = v + vi + vii', label: 'Total charges during the year (Sum of v, vi and vii)' },
-    { key: 'ix', idx: 'ix', formula: 'ix = iii + viii', label: 'Value of the Portfolio before Performance fee' },
-    { key: 'x_hwm', idx: 'x', formula: 'x = For 1st Year its i and for consecutive years its xviii of previous year', label: 'High Water Mark Value (HWM)' },
-    { key: 'xi', idx: 'xi', formula: 'xi = Max of (x, i) * e', label: 'Hurdle Rate of return' },
-    { key: 'xii', idx: 'xii', formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0', label: 'Portfolio value in excess of Hurdle Rate Return' },
-    { key: 'xiii', idx: 'xiii', formula: 'xiii = xii * d', label: 'Profit share of the PMS' },
-    { key: 'xiv', idx: 'xiv', formula: 'xiv = xiii', label: 'Profit Share To be taken by PMS' },
-    { key: 'xv', idx: 'xv', formula: 'xv = xiii > 0 then \'Yes\' else No Performance Fees', label: 'Is the Performance Fee charged?' },
-    { key: 'xvi', idx: 'xvi', formula: 'xvi = ix - xiii', label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
-    { key: 'xvii', idx: 'xvii', formula: 'xvii = (xvi / i - 1)%', label: '% Portfolio Return' },
-    { key: 'xviii', idx: 'xviii', formula: 'xviii = xv = \'Yes\' then ix else max of (ix, i, xviii of previous year)', label: 'High Water Mark to be carried forward for next year' }
+    { key: 'i',     idx: 'i',     formula: 'i = a',                                                           label: 'Capital Contributed /Assets under Management' },
+    { key: 'ii',    idx: 'ii',    formula: 'ii = i * Scenario',                                               label: 'Gain / (Loss) on Investment based on the Scenario' },
+    { key: 'iii',   idx: 'iii',   formula: 'iii = i + ii',                                                    label: 'Gross Value of the Portfolio at the end of the year' },
+    { key: 'iv',    idx: 'iv',    formula: 'iv = (iii + i) / 2',                                              label: 'Daily Weighted Average assets under management' },
+    { key: 'v',     idx: 'v',     formula: 'v = iv * c',                                                      label: 'Other Expense' },
+    { key: 'vi',    idx: 'vi',    formula: 'vi = iv * f',                                                     label: 'Brokerage and Transaction cost' },
+    { key: 'vii',   idx: 'vii',   formula: 'vii - (iv + v + vi) * b',                                        label: 'Management Fees' },
+    { key: 'viii',  idx: 'viii',  formula: 'viii = v + vi + vii',                                             label: 'Total charges during the year (Sum of v, vi and vii)' },
+    { key: 'ix',    idx: 'ix',    formula: 'ix = iii + viii',                                                 label: 'Value of the Portfolio before Performance fee' },
+    { key: 'x_hwm', idx: 'x',    formula: 'x = For 1st Year its i and for consecutive years its xviii of previous year', label: 'High Water Mark Value (HWM)' },
+    { key: 'xi',    idx: 'xi',    formula: 'xi = Max of (x, i) * e',                                         label: 'Hurdle Rate of return' },
+    { key: 'xii',   idx: 'xii',  formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0',                  label: 'Portfolio value in excess of Hurdle Rate Return' },
+    { key: 'xiii',  idx: 'xiii', formula: 'xiii = xii * d',                                                   label: 'Profit share of the PMS' },
+    { key: 'xiv',   idx: 'xiv',  formula: 'xiv = xiii',                                                      label: 'Profit Share To be taken by PMS' },
+    { key: 'xv',    idx: 'xv',   formula: "xv = xiii > 0 then 'Yes' else No Performance Fees",               label: 'Is the Performance Fee charged?' },
+    { key: 'xvi',   idx: 'xvi',  formula: 'xvi = ix - xiii',                                                 label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
+    { key: 'xvii',  idx: 'xvii', formula: 'xvii = (xvi / i - 1)%',                                           label: '% Portfolio Return' },
+    { key: 'xviii', idx: 'xviii',formula: "xviii = xv = 'Yes' then ix else max of (ix, i, xviii of previous year)", label: 'High Water Mark to be carried forward for next year' }
   ];
 
   for (var r = 0; r < defs.length; r++) {
