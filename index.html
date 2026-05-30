@@ -127,6 +127,34 @@
     color: #999;
   }
 
+  /* Words display inside capital field, right side */
+  .capital-words {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: #c00;
+    font-style: italic;
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+    pointer-events: none;
+    max-width: 55%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Capital input gets right padding so text doesn't overlap the words */
+  .capital-input-field input {
+    padding-right: 4px;
+    max-width: 42%;
+  }
+
+  /* Wrapper is just a passthrough now */
+  .capital-wrapper {
+    display: contents;
+  }
+
   table.fee-table {
     width: 100%;
     border-collapse: collapse;
@@ -214,43 +242,6 @@
     background: #fff;
   }
 
-  .btn-calculate {
-    display: block;
-    margin: 0 auto 16px auto;
-    background: #c00;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 9px 32px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    letter-spacing: 0.3px;
-  }
-
-  .btn-calculate:hover { background: #a00; }
-
-  .tab-row {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    margin-bottom: 20px;
-  }
-
-  .tab-btn {
-    border: 1px solid #c00;
-    background: #fff;
-    color: #c00;
-    padding: 7px 22px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .tab-btn:first-child { border-radius: 4px 0 0 4px; }
-  .tab-btn:last-child { border-radius: 0 4px 4px 0; }
-  .tab-btn.active { background: #c00; color: #fff; }
-
   .col-fees-label { width: 220px; }
   .col-idx { width: 28px; }
   .col-formula { width: 90px; }
@@ -274,11 +265,13 @@
   </div>
 </div>
 
+<!-- ===== FIXED ===== -->
 <div id="section-fixed" class="section active">
   <div class="inputs-row">
-    <div class="input-field">
+    <div class="input-field capital-input-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="f-capital" value="50,00,000" oninput="calcFixed()">
+      <input type="text" id="f-capital" value="50,00,000" oninput="onCapitalInput('f-capital','f-capital-words'); calcFixed()">
+      <span class="capital-words" id="f-capital-words">Fifty Lakhs Rupees</span>
     </div>
     <div class="input-field">
       <label>Management Fee (%age per annum)</label>
@@ -332,11 +325,13 @@
   </table>
 </div>
 
+<!-- ===== HYBRID ===== -->
 <div id="section-hybrid" class="section">
   <div class="inputs-row">
-    <div class="input-field">
+    <div class="input-field capital-input-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="h-capital" value="50,00,000" oninput="calcHybrid()">
+      <input type="text" id="h-capital" value="50,00,000" oninput="onCapitalInput('h-capital','h-capital-words'); calcHybrid()">
+      <span class="capital-words" id="h-capital-words">Fifty Lakhs Rupees</span>
     </div>
     <div class="input-field">
       <label>Management Fee (%age per annum)</label>
@@ -390,11 +385,13 @@
   </table>
 </div>
 
+<!-- ===== PERFORMANCE ===== -->
 <div id="section-performance" class="section">
   <div class="inputs-row">
-    <div class="input-field">
+    <div class="input-field capital-input-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="p-capital" value="50,00,000" oninput="calcPerf()">
+      <input type="text" id="p-capital" value="50,00,000" oninput="onCapitalInput('p-capital','p-capital-words'); calcPerf()">
+      <span class="capital-words" id="p-capital-words">Fifty Lakhs Rupees</span>
     </div>
     <div class="input-field disabled">
       <label>Management Fee (%age per annum)</label>
@@ -451,7 +448,7 @@
 <div class="notes-section">
   <h3>Notes:</h3>
   <table class="notes-table">
-     <tr><td>1</td><td>In the illustration, Management fee is assumed to be charged annually. However, the Portfolio Manager charges fee Monthly/Quarterly as defined in the Fee Schedule which is part of PMS agreement</td></tr>
+    <tr><td>1</td><td>In the illustration, Management fee is assumed to be charged annually. However, the Portfolio Manager charges fee Monthly/Quarterly as defined in the Fee Schedule which is part of PMS agreement</td></tr>
     <tr><td>2</td><td>Management Fees and Other Expenses are to be calculated on the average daily portfolio value payable on a monthly/quarterly basis at the end of each calendar month/quarter, as may be defined in Fee schedule.</td></tr>
     <tr><td>3</td><td>Returns are assumed to be generated linearly through the year.</td></tr>
     <tr><td>4</td><td>Other Expenses includes Account Opening charges, stamp duty /Audit Fee/ Bank charges / Fund Accounting charges / Custody Fee / demat charges or other miscellaneous expense, as may be defined in Fee schedule.</td></tr>
@@ -468,9 +465,20 @@
 </div>
 
 <script>
+/* ─── helpers ─── */
+
 function parseAmt(str) {
   if (typeof str === 'number') return str;
-  return parseFloat(String(str).replace(/,/g, '')) || 0;
+  var n = parseFloat(String(str).replace(/,/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+
+/* safe parseFloat – returns 0 when blank/NaN */
+function parsePct(id) {
+  var el = document.getElementById(id);
+  if (!el) return 0;
+  var n = parseFloat(el.value);
+  return isNaN(n) ? 0 : n;
 }
 
 function fmtNum(n) {
@@ -493,9 +501,7 @@ function fmtNum(n) {
   return (neg ? '-' : '') + result;
 }
 
-function fmtPct(n) {
-  return n.toFixed(2) + '%';
-}
+function fmtPct(n) { return n.toFixed(2) + '%'; }
 
 function cell(val, isNeg) {
   var n = Math.round(val);
@@ -503,6 +509,69 @@ function cell(val, isNeg) {
   return '<td class="' + cls + '">' + fmtNum(n) + '</td>';
 }
 
+/* ─── Indian number → words ─── */
+var ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+            'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen',
+            'Seventeen', 'Eighteen', 'Nineteen'];
+var tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+function twoDigitWords(n) {
+  if (n < 20) return ones[n];
+  return tens[Math.floor(n / 10)] + (n % 10 ? ' ' + ones[n % 10] : '');
+}
+
+function threeDigitWords(n) {
+  var h = Math.floor(n / 100);
+  var rem = n % 100;
+  var str = '';
+  if (h) str += ones[h] + ' Hundred';
+  if (rem) str += (str ? ' ' : '') + twoDigitWords(rem);
+  return str;
+}
+
+function numberToIndianWords(num) {
+  num = Math.floor(Math.abs(num));
+  if (num === 0) return 'Zero Rupees';
+
+  var crore  = Math.floor(num / 10000000);
+  var lakh   = Math.floor((num % 10000000) / 100000);
+  var thous  = Math.floor((num % 100000) / 1000);
+  var rem    = num % 1000;
+
+  var parts = [];
+  if (crore)  parts.push(threeDigitWords(crore)  + (crore  > 1 ? ' Crores'  : ' Crore'));
+  if (lakh)   parts.push(threeDigitWords(lakh)   + (lakh   > 1 ? ' Lakhs'   : ' Lakh'));
+  if (thous)  parts.push(threeDigitWords(thous)  + (thous  > 1 ? ' Thousands': ' Thousand'));
+  if (rem)    parts.push(threeDigitWords(rem));
+
+  return parts.join(' ') + ' Rupees';
+}
+
+/* ─── Capital input handler: format commas + show words ─── */
+function onCapitalInput(inputId, wordsId) {
+  var el = document.getElementById(inputId);
+  var raw = el.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+
+  /* reformat with Indian commas */
+  var formatted = '';
+  if (raw.length > 0) {
+    var num = parseInt(raw, 10);
+    if (!isNaN(num)) {
+      formatted = fmtNum(num);
+      /* update words */
+      document.getElementById(wordsId).textContent = numberToIndianWords(num);
+    } else {
+      document.getElementById(wordsId).textContent = '';
+    }
+  } else {
+    document.getElementById(wordsId).textContent = '';
+  }
+
+  /* preserve cursor roughly at end */
+  el.value = formatted;
+}
+
+/* ─── Tab switching ─── */
 function switchTab(val) {
   document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById('section-' + val).classList.add('active');
@@ -512,18 +581,24 @@ document.getElementById('feeTypeSelect').addEventListener('change', function() {
   switchTab(this.value);
 });
 
+/* ─── FIXED calc ─── */
 function calcFixed() {
-  var capital = parseAmt(document.getElementById('f-capital').value);
-  var mgmtPct = parseFloat(document.getElementById('f-mgmt').value) / 100;
-  var otherPct = parseFloat(document.getElementById('f-other').value) / 100;
-  var brokPct = parseFloat(document.getElementById('f-brok').value) / 100;
+  var capital  = parseAmt(document.getElementById('f-capital').value);
+  var mgmtPct  = parsePct('f-mgmt')  / 100;
+  var otherPct = parsePct('f-other') / 100;
+  var brokPct  = parsePct('f-brok')  / 100;
   var gains = [
-    parseFloat(document.getElementById('f-g1').value) / 100,
-    parseFloat(document.getElementById('f-g2').value) / 100,
-    parseFloat(document.getElementById('f-g3').value) / 100,
-    parseFloat(document.getElementById('f-g4').value) / 100,
-    parseFloat(document.getElementById('f-g5').value) / 100
+    (parsePct('f-g1')) / 100,
+    (parsePct('f-g2')) / 100,
+    (parsePct('f-g3')) / 100,
+    (parsePct('f-g4')) / 100,
+    (parsePct('f-g5')) / 100
   ];
+  /* allow negative gain inputs */
+  gains = gains.map(function(g, idx) {
+    var el = document.getElementById('f-g' + (idx+1));
+    return el ? (parseFloat(el.value) || 0) / 100 : 0;
+  });
 
   var rows = [];
   var i_val = capital;
@@ -537,15 +612,13 @@ function calcFixed() {
     var vii = -Math.abs(Math.round((iv + v + vi) * mgmtPct));
     var viii = Math.round(v + vi + vii);
     var ix  = Math.round(iii + viii);
-    var x   = ((ix / i) - 1) * 100;
-
+    var x   = i !== 0 ? ((ix / i) - 1) * 100 : 0;
     rows.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x });
     i_val = ix;
   }
 
   var tbody = document.getElementById('fixed-tbody');
   tbody.innerHTML = '';
-
   var labels = [
     ['i',    'i = a',                    'Capital Contributed /Assets under Management'],
     ['ii',   'ii = i * Scenario',        'Gain / (Loss) on Investment based on the Scenario'],
@@ -558,9 +631,7 @@ function calcFixed() {
     ['ix',   'ix=iii-viii',              'Net value of the Portfolio at the end of the year after all fees and expenses'],
     ['x',    'x=((ix/i)-1)%',           '% Portfolio Return']
   ];
-
   var keys = ['i','ii','iii','iv','v','vi','vii','viii','ix','x'];
-
   for (var r = 0; r < labels.length; r++) {
     var tr = document.createElement('tr');
     var pctRow = (r === 9);
@@ -579,25 +650,20 @@ function calcFixed() {
   }
 }
 
+/* ─── HYBRID calc ─── */
 function calcHybrid() {
-  var capital  = parseAmt(document.getElementById('h-capital').value);
-  var mgmtPct  = parseFloat(document.getElementById('h-mgmt').value) / 100;
-  var otherPct = parseFloat(document.getElementById('h-other').value) / 100;
-  var brokPct  = parseFloat(document.getElementById('h-brok').value) / 100;
-  var perfPct  = parseFloat(document.getElementById('h-perf').value) / 100;
-  var hurdlePct = parseFloat(document.getElementById('h-hurdle').value) / 100;
-  var gains = [
-    parseFloat(document.getElementById('h-g1').value) / 100,
-    parseFloat(document.getElementById('h-g2').value) / 100,
-    parseFloat(document.getElementById('h-g3').value) / 100,
-    parseFloat(document.getElementById('h-g4').value) / 100,
-    parseFloat(document.getElementById('h-g5').value) / 100
-  ];
+  var capital   = parseAmt(document.getElementById('h-capital').value);
+  var mgmtPct   = parsePct('h-mgmt')   / 100;
+  var otherPct  = parsePct('h-other')  / 100;
+  var brokPct   = parsePct('h-brok')   / 100;
+  var perfPct   = parsePct('h-perf')   / 100;
+  var hurdlePct = parsePct('h-hurdle') / 100;
+  var gains = [1,2,3,4,5].map(function(n) {
+    var el = document.getElementById('h-g' + n);
+    return el ? (parseFloat(el.value) || 0) / 100 : 0;
+  });
 
-  var hwm = capital;
-  var prevClose = capital;
-  var results = [];
-
+  var hwm = capital, prevClose = capital, results = [];
   for (var y = 0; y < 5; y++) {
     var i    = Math.round(prevClose);
     var ii   = Math.round(i * gains[y]);
@@ -608,87 +674,70 @@ function calcHybrid() {
     var vii  = -Math.abs(Math.round((iv + v + vi) * mgmtPct));
     var viii = Math.round(v + vi + vii);
     var ix   = Math.round(iii + viii);
-    var x_hwm = (y === 0) ? capital : hwm;
-    x_hwm = Math.round(x_hwm);
+    var x_hwm = Math.round(y === 0 ? capital : hwm);
     var xi   = Math.round(Math.max(x_hwm, i) * hurdlePct);
     var xii  = ix > (x_hwm + xi) ? Math.round(ix - x_hwm - xi) : 0;
     var xiii = Math.round(xii * perfPct);
     var xiv  = xiii;
     var xv   = xiii > 0 ? 'Yes' : 'No Performance Fee';
     var xvi  = Math.round(ix - xiii);
-    var xvii = ((xvi / i) - 1) * 100;
-    var prevHwm = (y > 0) ? results[y-1].xviii : capital;
+    var xvii = i !== 0 ? ((xvi / i) - 1) * 100 : 0;
+    var prevHwm = y > 0 ? results[y-1].xviii : capital;
     var xviii = (xv === 'Yes') ? ix : Math.max(ix, i, prevHwm);
-
     results.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x_hwm, xi, xii, xiii, xiv, xv, xvi, xvii, xviii });
-    hwm = xviii;
-    prevClose = xvi;
+    hwm = xviii; prevClose = xvi;
   }
 
   var tbody = document.getElementById('hybrid-tbody');
   tbody.innerHTML = '';
-
   var defs = [
-    { key: 'i',     idx: 'i',     formula: 'i = a',                                                           label: 'Capital Contributed /Assets under Management' },
-    { key: 'ii',    idx: 'ii',    formula: 'ii = i * Scenario',                                               label: 'Gain / (Loss) on Investment based on the Scenario' },
-    { key: 'iii',   idx: 'iii',   formula: 'iii = i + ii',                                                    label: 'Gross Value of the Portfolio at the end of the year' },
-    { key: 'iv',    idx: 'iv',    formula: 'iv = (iii + i) / 2',                                              label: 'Daily Weighted Average assets under management' },
-    { key: 'v',     idx: 'v',     formula: 'v = iv * c',                                                      label: 'Other Expense' },
-    { key: 'vi',    idx: 'vi',    formula: 'vi = iv * f',                                                     label: 'Brokerage and Transaction cost' },
-    { key: 'vii',   idx: 'vii',   formula: 'vii - (iv + v + vi) * b',                                        label: 'Management Fees' },
-    { key: 'viii',  idx: 'viii',  formula: 'viii = v + vi + vii',                                             label: 'Total charges during the year (Sum of v, vi and vii)' },
-    { key: 'ix',    idx: 'ix',    formula: 'ix = iii + viii',                                                 label: 'Value of the Portfolio before Performance fee' },
-    { key: 'x_hwm', idx: 'x',    formula: 'x = For 1st Year its i and for consecutive years its xviii of previous year', label: 'High Water Mark Value (HWM)' },
-    { key: 'xi',    idx: 'xi',    formula: 'xi = Max of (x, i) * e',                                         label: 'Hurdle Rate of return' },
-    { key: 'xii',   idx: 'xii',  formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0',                  label: 'Portfolio value in excess of Hurdle Rate Return' },
-    { key: 'xiii',  idx: 'xiii', formula: 'xiii = xii * d',                                                   label: 'Profit share of the PMS' },
-    { key: 'xiv',   idx: 'xiv',  formula: 'xiv = xiii',                                                      label: 'Profit Share To be taken by PMS' },
-    { key: 'xv',    idx: 'xv',   formula: "xv = xiii > 0 then 'Yes' else No Performance Fee",               label: 'Is the Performance Fee charged?' },
-    { key: 'xvi',   idx: 'xvi',  formula: 'xvi = ix - xiii',                                                 label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
-    { key: 'xvii',  idx: 'xvii', formula: 'xvii = (xvi / i - 1)%',                                           label: '% Portfolio Return' },
-    { key: 'xviii', idx: 'xviii',formula: "xviii = xv = 'Yes' then ix else max of (ix, i, xviii of previous year)", label: 'High Water Mark to be carried forward for next year' }
+    { key:'i',     idx:'i',     formula:'i = a',                                                            label:'Capital Contributed /Assets under Management' },
+    { key:'ii',    idx:'ii',    formula:'ii = i * Scenario',                                                label:'Gain / (Loss) on Investment based on the Scenario' },
+    { key:'iii',   idx:'iii',   formula:'iii = i + ii',                                                     label:'Gross Value of the Portfolio at the end of the year' },
+    { key:'iv',    idx:'iv',    formula:'iv = (iii + i) / 2',                                               label:'Daily Weighted Average assets under management' },
+    { key:'v',     idx:'v',     formula:'v = iv * c',                                                       label:'Other Expense' },
+    { key:'vi',    idx:'vi',    formula:'vi = iv * f',                                                      label:'Brokerage and Transaction cost' },
+    { key:'vii',   idx:'vii',   formula:'vii - (iv + v + vi) * b',                                         label:'Management Fees' },
+    { key:'viii',  idx:'viii',  formula:'viii = v + vi + vii',                                              label:'Total charges during the year (Sum of v, vi and vii)' },
+    { key:'ix',    idx:'ix',    formula:'ix = iii + viii',                                                  label:'Value of the Portfolio before Performance fee' },
+    { key:'x_hwm', idx:'x',    formula:'x = For 1st Year its i and for consecutive years its xviii of previous year', label:'High Water Mark Value (HWM)' },
+    { key:'xi',    idx:'xi',    formula:'xi = Max of (x, i) * e',                                          label:'Hurdle Rate of return' },
+    { key:'xii',   idx:'xii',  formula:'xii = ix > (x + xi) then (ix - x - xi) else 0',                   label:'Portfolio value in excess of Hurdle Rate Return' },
+    { key:'xiii',  idx:'xiii', formula:'xiii = xii * d',                                                    label:'Profit share of the PMS' },
+    { key:'xiv',   idx:'xiv',  formula:'xiv = xiii',                                                       label:'Profit Share To be taken by PMS' },
+    { key:'xv',    idx:'xv',   formula:"xv = xiii > 0 then 'Yes' else No Performance Fee",                label:'Is the Performance Fee charged?' },
+    { key:'xvi',   idx:'xvi',  formula:'xvi = ix - xiii',                                                  label:'Net value of the Portfolio at the end of the year after all fees and expenses' },
+    { key:'xvii',  idx:'xvii', formula:'xvii = (xvi / i - 1)%',                                            label:'% Portfolio Return' },
+    { key:'xviii', idx:'xviii',formula:"xviii = xv = 'Yes' then ix else max of (ix, i, xviii of previous year)", label:'High Water Mark to be carried forward for next year' }
   ];
-
   for (var r = 0; r < defs.length; r++) {
     var d = defs[r];
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td class="label-cell">' + d.label + '</td>' +
-      '<td class="idx-cell">' + d.idx + '</td>' +
-      '<td class="formula-cell" style="font-size:10px;color:#777;">' + d.formula + '</td>';
+    tr.innerHTML = '<td class="label-cell">' + d.label + '</td><td class="idx-cell">' + d.idx + '</td><td class="formula-cell" style="font-size:10px;color:#777;">' + d.formula + '</td>';
     for (var y = 0; y < 5; y++) {
       var val = results[y][d.key];
-      if (d.key === 'xvii') {
-        tr.innerHTML += '<td class="' + (val < 0 ? 'neg' : 'pos') + '">' + fmtPct(val) + '</td>';
-      } else if (d.key === 'xv') {
-        tr.innerHTML += '<td class="' + (val === 'Yes' ? 'pos' : 'no-p') + '">' + val + '</td>';
-      } else if (typeof val === 'number') {
-        tr.innerHTML += cell(val, val < 0);
-      } else {
-        tr.innerHTML += '<td>' + val + '</td>';
-      }
+      if (d.key === 'xvii')      tr.innerHTML += '<td class="' + (val < 0 ? 'neg' : 'pos') + '">' + fmtPct(val) + '</td>';
+      else if (d.key === 'xv')   tr.innerHTML += '<td class="' + (val === 'Yes' ? 'pos' : 'no-p') + '">' + val + '</td>';
+      else if (typeof val === 'number') tr.innerHTML += cell(val, val < 0);
+      else tr.innerHTML += '<td>' + val + '</td>';
     }
     tbody.appendChild(tr);
   }
 }
 
+/* ─── PERFORMANCE calc ─── */
 function calcPerf() {
-  var capital  = parseAmt(document.getElementById('p-capital').value);
-  var otherPct = parseFloat(document.getElementById('p-other').value) / 100;
-  var brokPct  = parseFloat(document.getElementById('p-brok').value) / 100;
-  var perfPct  = parseFloat(document.getElementById('p-perf').value) / 100;
-  var hurdlePct = parseFloat(document.getElementById('p-hurdle').value) / 100;
-  var gains = [
-    parseFloat(document.getElementById('p-g1').value) / 100,
-    parseFloat(document.getElementById('p-g2').value) / 100,
-    parseFloat(document.getElementById('p-g3').value) / 100,
-    parseFloat(document.getElementById('p-g4').value) / 100,
-    parseFloat(document.getElementById('p-g5').value) / 100
-  ];
+  var capital   = parseAmt(document.getElementById('p-capital').value);
+  var otherPct  = parsePct('p-other')  / 100;
+  var brokPct   = parsePct('p-brok')   / 100;
+  var perfPct   = parsePct('p-perf')   / 100;
+  var hurdlePct = parsePct('p-hurdle') / 100;
+  var gains = [1,2,3,4,5].map(function(n) {
+    var el = document.getElementById('p-g' + n);
+    return el ? (parseFloat(el.value) || 0) / 100 : 0;
+  });
 
-  var hwm = capital;
-  var prevClose = capital;
-  var results = [];
-
+  var hwm = capital, prevClose = capital, results = [];
   for (var y = 0; y < 5; y++) {
     var i    = Math.round(prevClose);
     var ii   = Math.round(i * gains[y]);
@@ -699,69 +748,58 @@ function calcPerf() {
     var vii  = 0;
     var viii = Math.round(v + vi + vii);
     var ix   = Math.round(iii + viii);
-    var x_hwm = (y === 0) ? capital : hwm;
-    x_hwm = Math.round(x_hwm);
+    var x_hwm = Math.round(y === 0 ? capital : hwm);
     var xi   = Math.round(Math.max(x_hwm, i) * hurdlePct);
     var xii  = ix > (x_hwm + xi) ? Math.round(ix - x_hwm - xi) : 0;
     var xiii = Math.round(xii * perfPct);
     var xiv  = xiii;
     var xv   = xiii > 0 ? 'Yes' : 'No Performance Fee';
     var xvi  = Math.round(ix - xiii);
-    var xvii = ((xvi / i) - 1) * 100;
-    var prevHwm = (y > 0) ? results[y-1].xviii : capital;
+    var xvii = i !== 0 ? ((xvi / i) - 1) * 100 : 0;
+    var prevHwm = y > 0 ? results[y-1].xviii : capital;
     var xviii = (xv === 'Yes') ? ix : Math.max(ix, i, prevHwm);
-
     results.push({ i, ii, iii, iv, v, vi, vii, viii, ix, x_hwm, xi, xii, xiii, xiv, xv, xvi, xvii, xviii });
-    hwm = xviii;
-    prevClose = xvi;
+    hwm = xviii; prevClose = xvi;
   }
 
   var tbody = document.getElementById('perf-tbody');
   tbody.innerHTML = '';
-
   var defs = [
-    { key: 'i',     idx: 'i',     formula: 'i = a',                                                           label: 'Capital Contributed /Assets under Management' },
-    { key: 'ii',    idx: 'ii',    formula: 'ii = i * Scenario',                                               label: 'Gain / (Loss) on Investment based on the Scenario' },
-    { key: 'iii',   idx: 'iii',   formula: 'iii = i + ii',                                                    label: 'Gross Value of the Portfolio at the end of the year' },
-    { key: 'iv',    idx: 'iv',    formula: 'iv = (iii + i) / 2',                                              label: 'Daily Weighted Average assets under management' },
-    { key: 'v',     idx: 'v',     formula: 'v = iv * c',                                                      label: 'Other Expense' },
-    { key: 'vi',    idx: 'vi',    formula: 'vi = iv * f',                                                     label: 'Brokerage and Transaction cost' },
-    { key: 'vii',   idx: 'vii',   formula: 'vii - (iv + v + vi) * b',                                        label: 'Management Fees' },
-    { key: 'viii',  idx: 'viii',  formula: 'viii = v + vi + vii',                                             label: 'Total charges during the year (Sum of v, vi and vii)' },
-    { key: 'ix',    idx: 'ix',    formula: 'ix = iii + viii',                                                 label: 'Value of the Portfolio before Performance fee' },
-    { key: 'x_hwm', idx: 'x',    formula: 'x = For 1st Year its i and for consecutive years its xviii of previous year', label: 'High Water Mark Value (HWM)' },
-    { key: 'xi',    idx: 'xi',    formula: 'xi = Max of (x, i) * e',                                         label: 'Hurdle Rate of return' },
-    { key: 'xii',   idx: 'xii',  formula: 'xii = ix > (x + xi) then (ix - x - xi) else 0',                  label: 'Portfolio value in excess of Hurdle Rate Return' },
-    { key: 'xiii',  idx: 'xiii', formula: 'xiii = xii * d',                                                   label: 'Profit share of the PMS' },
-    { key: 'xiv',   idx: 'xiv',  formula: 'xiv = xiii',                                                      label: 'Profit Share To be taken by PMS' },
-    { key: 'xv',    idx: 'xv',   formula: "xv = xiii > 0 then 'Yes' else No Performance Fee",               label: 'Is the Performance Fee charged?' },
-    { key: 'xvi',   idx: 'xvi',  formula: 'xvi = ix - xiii',                                                 label: 'Net value of the Portfolio at the end of the year after all fees and expenses' },
-    { key: 'xvii',  idx: 'xvii', formula: 'xvii = (xvi / i - 1)%',                                           label: '% Portfolio Return' },
-    { key: 'xviii', idx: 'xviii',formula: "xviii = xv = 'Yes' then ix else max of (ix, i, xviii of previous year)", label: 'High Water Mark to be carried forward for next year' }
+    { key:'i',     idx:'i',     formula:'i = a',                                                            label:'Capital Contributed /Assets under Management' },
+    { key:'ii',    idx:'ii',    formula:'ii = i * Scenario',                                                label:'Gain / (Loss) on Investment based on the Scenario' },
+    { key:'iii',   idx:'iii',   formula:'iii = i + ii',                                                     label:'Gross Value of the Portfolio at the end of the year' },
+    { key:'iv',    idx:'iv',    formula:'iv = (iii + i) / 2',                                               label:'Daily Weighted Average assets under management' },
+    { key:'v',     idx:'v',     formula:'v = iv * c',                                                       label:'Other Expense' },
+    { key:'vi',    idx:'vi',    formula:'vi = iv * f',                                                      label:'Brokerage and Transaction cost' },
+    { key:'vii',   idx:'vii',   formula:'vii - (iv + v + vi) * b',                                         label:'Management Fees' },
+    { key:'viii',  idx:'viii',  formula:'viii = v + vi + vii',                                              label:'Total charges during the year (Sum of v, vi and vii)' },
+    { key:'ix',    idx:'ix',    formula:'ix = iii + viii',                                                  label:'Value of the Portfolio before Performance fee' },
+    { key:'x_hwm', idx:'x',    formula:'x = For 1st Year its i and for consecutive years its xviii of previous year', label:'High Water Mark Value (HWM)' },
+    { key:'xi',    idx:'xi',    formula:'xi = Max of (x, i) * e',                                          label:'Hurdle Rate of return' },
+    { key:'xii',   idx:'xii',  formula:'xii = ix > (x + xi) then (ix - x - xi) else 0',                   label:'Portfolio value in excess of Hurdle Rate Return' },
+    { key:'xiii',  idx:'xiii', formula:'xiii = xii * d',                                                    label:'Profit share of the PMS' },
+    { key:'xiv',   idx:'xiv',  formula:'xiv = xiii',                                                       label:'Profit Share To be taken by PMS' },
+    { key:'xv',    idx:'xv',   formula:"xv = xiii > 0 then 'Yes' else No Performance Fee",                label:'Is the Performance Fee charged?' },
+    { key:'xvi',   idx:'xvi',  formula:'xvi = ix - xiii',                                                  label:'Net value of the Portfolio at the end of the year after all fees and expenses' },
+    { key:'xvii',  idx:'xvii', formula:'xvii = (xvi / i - 1)%',                                            label:'% Portfolio Return' },
+    { key:'xviii', idx:'xviii',formula:"xviii = xv = 'Yes' then ix else max of (ix, i, xviii of previous year)", label:'High Water Mark to be carried forward for next year' }
   ];
-
   for (var r = 0; r < defs.length; r++) {
     var d = defs[r];
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td class="label-cell">' + d.label + '</td>' +
-      '<td class="idx-cell">' + d.idx + '</td>' +
-      '<td class="formula-cell" style="font-size:10px;color:#777;">' + d.formula + '</td>';
+    tr.innerHTML = '<td class="label-cell">' + d.label + '</td><td class="idx-cell">' + d.idx + '</td><td class="formula-cell" style="font-size:10px;color:#777;">' + d.formula + '</td>';
     for (var y = 0; y < 5; y++) {
       var val = results[y][d.key];
-      if (d.key === 'xvii') {
-        tr.innerHTML += '<td class="' + (val < 0 ? 'neg' : 'pos') + '">' + fmtPct(val) + '</td>';
-      } else if (d.key === 'xv') {
-        tr.innerHTML += '<td class="' + (val === 'Yes' ? 'pos' : 'no-p') + '">' + val + '</td>';
-      } else if (typeof val === 'number') {
-        tr.innerHTML += cell(val, val < 0);
-      } else {
-        tr.innerHTML += '<td>' + val + '</td>';
-      }
+      if (d.key === 'xvii')      tr.innerHTML += '<td class="' + (val < 0 ? 'neg' : 'pos') + '">' + fmtPct(val) + '</td>';
+      else if (d.key === 'xv')   tr.innerHTML += '<td class="' + (val === 'Yes' ? 'pos' : 'no-p') + '">' + val + '</td>';
+      else if (typeof val === 'number') tr.innerHTML += cell(val, val < 0);
+      else tr.innerHTML += '<td>' + val + '</td>';
     }
     tbody.appendChild(tr);
   }
 }
 
+/* ─── Initial render ─── */
 calcFixed();
 calcHybrid();
 calcPerf();
