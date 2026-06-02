@@ -247,6 +247,21 @@
   .col-formula { width: 90px; }
 
   .no-p { color: #555; font-style: italic; }
+
+  .capital-error {
+    display: none;
+    color: #c00;
+    font-size: 10px;
+    margin-top: 3px;
+    font-style: italic;
+  }
+  .capital-error.visible {
+    display: block;
+  }
+  .input-field.capital-invalid {
+    border-color: #c00;
+    background: #fff5f5;
+  }
 </style>
 </head>
 <body>
@@ -268,10 +283,13 @@
 <!-- ===== FIXED ===== -->
 <div id="section-fixed" class="section active">
   <div class="inputs-row">
-    <div class="input-field capital-input-field">
+    <div>
+    <div class="input-field capital-input-field" id="f-capital-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="f-capital" value="50,00,000" oninput="onCapitalInput('f-capital','f-capital-words'); calcFixed()">
+      <input type="text" id="f-capital" value="50,00,000" oninput="onCapitalInput('f-capital','f-capital-words','f-capital-field','f-capital-err'); calcFixed()">
       <span class="capital-words" id="f-capital-words">Fifty Lakhs Rupees</span>
+    </div>
+    <div class="capital-error" id="f-capital-err">Minimum capital contribution is 50 Lakhs</div>
     </div>
     <div class="input-field">
       <label>Management Fee (%age per annum)</label>
@@ -328,10 +346,13 @@
 <!-- ===== HYBRID ===== -->
 <div id="section-hybrid" class="section">
   <div class="inputs-row">
-    <div class="input-field capital-input-field">
+    <div>
+    <div class="input-field capital-input-field" id="h-capital-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="h-capital" value="50,00,000" oninput="onCapitalInput('h-capital','h-capital-words'); calcHybrid()">
+      <input type="text" id="h-capital" value="50,00,000" oninput="onCapitalInput('h-capital','h-capital-words','h-capital-field','h-capital-err'); calcHybrid()">
       <span class="capital-words" id="h-capital-words">Fifty Lakhs Rupees</span>
+    </div>
+    <div class="capital-error" id="h-capital-err">Minimum capital contribution is ₹50 Lakhs (50,00,000)</div>
     </div>
     <div class="input-field">
       <label>Management Fee (%age per annum)</label>
@@ -388,10 +409,13 @@
 <!-- ===== PERFORMANCE ===== -->
 <div id="section-performance" class="section">
   <div class="inputs-row">
-    <div class="input-field capital-input-field">
+    <div>
+    <div class="input-field capital-input-field" id="p-capital-field">
       <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="p-capital" value="50,00,000" oninput="onCapitalInput('p-capital','p-capital-words'); calcPerf()">
+      <input type="text" id="p-capital" value="50,00,000" oninput="onCapitalInput('p-capital','p-capital-words','p-capital-field','p-capital-err'); calcPerf()">
       <span class="capital-words" id="p-capital-words">Fifty Lakhs Rupees</span>
+    </div>
+    <div class="capital-error" id="p-capital-err">Minimum capital contribution is ₹50 Lakhs (50,00,000)</div>
     </div>
     <div class="input-field disabled">
       <label>Management Fee (%age per annum)</label>
@@ -547,10 +571,15 @@ function numberToIndianWords(num) {
   return parts.join(' ') + ' Rupees';
 }
 
-/* ─── Capital input handler: format commas + show words ─── */
-function onCapitalInput(inputId, wordsId) {
+/* ─── Capital input handler: format commas + show words + validate min 50L ─── */
+var MIN_CAPITAL = 5000000; // 50 Lakhs
+
+function onCapitalInput(inputId, wordsId, fieldId, errId) {
   var el = document.getElementById(inputId);
   var raw = el.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+
+  var fieldEl = document.getElementById(fieldId);
+  var errEl   = document.getElementById(errId);
 
   /* reformat with Indian commas */
   var formatted = '';
@@ -558,13 +587,25 @@ function onCapitalInput(inputId, wordsId) {
     var num = parseInt(raw, 10);
     if (!isNaN(num)) {
       formatted = fmtNum(num);
-      /* update words */
       document.getElementById(wordsId).textContent = numberToIndianWords(num);
+
+      /* ── validation ── */
+      if (num < MIN_CAPITAL) {
+        fieldEl.classList.add('capital-invalid');
+        errEl.classList.add('visible');
+      } else {
+        fieldEl.classList.remove('capital-invalid');
+        errEl.classList.remove('visible');
+      }
     } else {
       document.getElementById(wordsId).textContent = '';
+      fieldEl.classList.remove('capital-invalid');
+      errEl.classList.remove('visible');
     }
   } else {
     document.getElementById(wordsId).textContent = '';
+    fieldEl.classList.remove('capital-invalid');
+    errEl.classList.remove('visible');
   }
 
   /* preserve cursor roughly at end */
@@ -584,6 +625,7 @@ document.getElementById('feeTypeSelect').addEventListener('change', function() {
 /* ─── FIXED calc ─── */
 function calcFixed() {
   var capital  = parseAmt(document.getElementById('f-capital').value);
+  if (capital < MIN_CAPITAL) capital = MIN_CAPITAL;
   var mgmtPct  = parsePct('f-mgmt')  / 100;
   var otherPct = parsePct('f-other') / 100;
   var brokPct  = parsePct('f-brok')  / 100;
@@ -653,6 +695,7 @@ function calcFixed() {
 /* ─── HYBRID calc ─── */
 function calcHybrid() {
   var capital   = parseAmt(document.getElementById('h-capital').value);
+  if (capital < MIN_CAPITAL) capital = MIN_CAPITAL;
   var mgmtPct   = parsePct('h-mgmt')   / 100;
   var otherPct  = parsePct('h-other')  / 100;
   var brokPct   = parsePct('h-brok')   / 100;
@@ -728,6 +771,7 @@ function calcHybrid() {
 /* ─── PERFORMANCE calc ─── */
 function calcPerf() {
   var capital   = parseAmt(document.getElementById('p-capital').value);
+  if (capital < MIN_CAPITAL) capital = MIN_CAPITAL;
   var otherPct  = parsePct('p-other')  / 100;
   var brokPct   = parsePct('p-brok')   / 100;
   var perfPct   = parsePct('p-perf')   / 100;
