@@ -12,32 +12,35 @@
     font-size: 13px;
     background: #fff;
     color: #333;
-    padding: 30px 40px;
+    padding: 20px 16px;
   }
 
   h2.page-title {
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     color: #222;
+    line-height: 1.4;
   }
 
   .fee-type-wrapper {
     display: flex;
     justify-content: center;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
   }
 
   .section { display: none; }
-  .section.active { display: block; padding-top: 18px; }
+  .section.active { display: block; padding-top: 14px; }
 
   .field-group {
     position: relative;
     border: 1px solid #c00;
     border-radius: 4px;
     padding: 6px 12px 6px 12px;
-    min-width: 220px;
+    min-width: 200px;
+    width: 100%;
+    max-width: 280px;
   }
 
   .field-group label {
@@ -62,10 +65,7 @@
     -webkit-appearance: none;
   }
 
-  .field-group select {
-    cursor: pointer;
-    padding-right: 24px;
-  }
+  .field-group select { cursor: pointer; padding-right: 24px; }
 
   .select-arrow {
     position: absolute;
@@ -77,11 +77,26 @@
     font-size: 12px;
   }
 
+  /* ---- INPUTS GRID ---- */
   .inputs-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 14px;
     margin-bottom: 12px;
+  }
+
+  @media (max-width: 700px) {
+    .inputs-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .inputs-row {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
   }
 
   .input-field {
@@ -97,14 +112,18 @@
     left: 10px;
     background: #fff;
     padding: 0 4px;
-    font-size: 11px;
+    font-size: 10px;
     color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 20px);
   }
 
   .input-field input {
     border: none;
     outline: none;
-    font-size: 14px;
+    font-size: 13px;
     width: 100%;
     background: transparent;
     color: #222;
@@ -112,33 +131,27 @@
 
   .input-field .unit {
     position: absolute;
-    right: 10px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 13px;
     color: #555;
   }
 
-  .input-field.disabled {
-    background: #f5f5f5;
-  }
-
-  .input-field.disabled input {
-    color: #999;
-  }
+  .input-field.disabled { background: #f5f5f5; }
+  .input-field.disabled input { color: #999; }
 
   .capital-words {
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 10px;
+    font-size: 9px;
     color: #c00;
     font-style: italic;
-    letter-spacing: 0.1px;
     white-space: nowrap;
     pointer-events: none;
-    max-width: 55%;
+    max-width: 50%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -148,22 +161,40 @@
     max-width: 42%;
   }
 
-  .capital-wrapper {
-    display: contents;
+  /* ---- TABLE ---- */
+  .table-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* Scroll hint on mobile */
+  .scroll-hint {
+    display: none;
+    font-size: 11px;
+    color: #888;
+    text-align: center;
+    margin-bottom: 4px;
+    font-style: italic;
+  }
+
+  @media (max-width: 700px) {
+    .scroll-hint { display: block; }
   }
 
   table.fee-table {
     width: 100%;
+    min-width: 560px;
     border-collapse: collapse;
-    margin-top: 20px;
-    margin-bottom: 28px;
     table-layout: fixed;
   }
 
   table.fee-table th,
   table.fee-table td {
     border: 1px solid #ddd;
-    padding: 7px 8px;
+    padding: 6px 6px;
     text-align: center;
     font-size: 11px;
     font-weight: 700;
@@ -171,84 +202,50 @@
     word-wrap: break-word;
   }
 
-  table.fee-table th {
-    background: #fff;
-    font-weight: 600;
-  }
-
-  table.fee-table th.year-header {
-    color: #c00;
-    font-weight: 600;
-  }
-
-  table.fee-table th.col-fees-label {
-    width: 28%;
-  }
-
-  
-  table.fee-table th.year-header {
-    width: 14.4%;
-  }
+  table.fee-table th { background: #fff; font-weight: 600; }
+  table.fee-table th.year-header { color: #c00; font-weight: 600; }
+  table.fee-table th.col-fees-label { width: 30%; }
+  table.fee-table th.year-header { width: 14%; }
 
   table.fee-table td.label-cell {
     text-align: left;
     background: #fff;
-    font-size: 11px;
+    font-size: 10.5px;
     color: #333;
     line-height: 1.4;
   }
 
-  
   .label-suffix {
     color: #aaa;
     font-weight: 400;
-    font-size: 10px;
-  }
-
-  table.fee-table td.formula-cell,
-  table.fee-table td.idx-cell,
-  table.fee-table th.col-idx,
-  table.fee-table th.col-formula {
-    display: none;
+    font-size: 9.5px;
   }
 
   .neg { color: #c00; }
   .pos { color: #333; }
 
   .gain-input {
-    width: 40px;
+    width: 38px;
     border: 1px solid #bbb;
     border-radius: 3px;
     text-align: center;
     font-size: 11px;
-    padding: 2px 3px;
+    padding: 2px 2px;
     margin-right: 1px;
   }
 
-  
-  .notes-section {
-    margin-top: 10px;
-  }
-
-  .notes-section h3 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #222;
-    text-decoration: underline;
-  }
-
-  .disclosures-section {
-    margin-top: 24px;
-  }
-
+  /* ---- NOTES / DISCLOSURES ---- */
+  .notes-section { margin-top: 10px; }
+  .notes-section h3,
   .disclosures-section h3 {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     margin-bottom: 10px;
     color: #222;
     text-decoration: underline;
   }
+
+  .disclosures-section { margin-top: 24px; }
 
   .notes-table {
     width: 100%;
@@ -257,22 +254,18 @@
 
   .notes-table td {
     border: 1px solid #ddd;
-    padding: 8px 12px;
-    font-size: 12px;
+    padding: 7px 10px;
+    font-size: 11.5px;
     vertical-align: top;
     color: #333;
   }
 
   .notes-table td:first-child {
-    width: 36px;
+    width: 32px;
     text-align: center;
     font-weight: 600;
     background: #fff;
   }
-
-  .col-fees-label { width: 220px; }
-  .col-idx { width: 28px; }
-  .col-formula { width: 90px; }
 
   .no-p { color: #555; font-style: italic; }
 
@@ -283,12 +276,20 @@
     margin-top: 3px;
     font-style: italic;
   }
-  .capital-error.visible {
-    display: block;
-  }
+  .capital-error.visible { display: block; }
   .input-field.capital-invalid {
     border-color: #c00;
     background: #fff5f5;
+  }
+
+  /* ---- RESPONSIVE TWEAKS ---- */
+  @media (max-width: 480px) {
+    body { padding: 14px 10px; }
+    h2.page-title { font-size: 14px; }
+    .field-group { max-width: 100%; }
+    table.fee-table th, table.fee-table td { font-size: 10px; padding: 5px 4px; }
+    .gain-input { width: 32px; font-size: 10px; }
+    .notes-table td { font-size: 11px; padding: 6px 8px; }
   }
 </style>
 </head>
@@ -297,7 +298,7 @@
 <h2 class="page-title"><strong>Pmsbazaar Fee Calculator Illustration</strong></h2>
 
 <div class="fee-type-wrapper">
-  <div class="field-group" style="min-width:240px;">
+  <div class="field-group">
     <label>FeeType</label>
     <select id="feeTypeSelect" onchange="switchTab(this.value)">
       <option value="fixed">Fixed Fee Structure</option>
@@ -308,16 +309,15 @@
   </div>
 </div>
 
-<!-- ===== FIXED ===== -->
 <div id="section-fixed" class="section active">
   <div class="inputs-row">
     <div>
-    <div class="input-field capital-input-field" id="f-capital-field">
-      <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="f-capital" value="50,00,000" oninput="onCapitalInput('f-capital','f-capital-words','f-capital-field','f-capital-err'); calcFixed()">
-      <span class="capital-words" id="f-capital-words">Fifty Lakhs Rupees</span>
-    </div>
-    <div class="capital-error" id="f-capital-err">Minimum capital contribution is 50 Lakhs</div>
+      <div class="input-field capital-input-field" id="f-capital-field">
+        <label>Capital Contribution (Rs.)</label>
+        <input type="text" id="f-capital" value="50,00,000" oninput="onCapitalInput('f-capital','f-capital-words','f-capital-field','f-capital-err'); calcFixed()">
+        <span class="capital-words" id="f-capital-words">Fifty Lakhs Rupees</span>
+      </div>
+      <div class="capital-error" id="f-capital-err">Minimum capital contribution is 50 Lakhs</div>
     </div>
     <div class="input-field">
       <label>Management Fee (%age per annum)</label>
@@ -346,39 +346,41 @@
     </div>
   </div>
 
-  <table class="fee-table" id="fixed-table">
-    <thead>
-      <tr>
-        <th class="col-fees-label">Fees</th>
-        <th class="year-header">Year 1<br>Gain/Loss</th>
-        <th class="year-header">Year 2<br>Gain/Loss</th>
-        <th class="year-header">Year 3<br>Gain/Loss</th>
-        <th class="year-header">Year 4<br>Gain/Loss</th>
-        <th class="year-header">Year 5<br>Gain/Loss</th>
-      </tr>
-      <tr>
-        <th></th>
-        <th><input class="gain-input" id="f-g1" type="number" value="20" oninput="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g2" type="number" value="-20" oninput="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g3" type="number" value="10" oninput="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g4" type="number" value="-15" oninput="calcFixed()">%</th>
-        <th><input class="gain-input" id="f-g5" type="number" value="50" oninput="calcFixed()">%</th>
-      </tr>
-    </thead>
-    <tbody id="fixed-tbody"></tbody>
-  </table>
+  <div class="scroll-hint">&#8596; Scroll table horizontally to see all years</div>
+  <div class="table-scroll-wrapper">
+    <table class="fee-table" id="fixed-table">
+      <thead>
+        <tr>
+          <th class="col-fees-label">Fees</th>
+          <th class="year-header">Year 1<br>Gain/Loss</th>
+          <th class="year-header">Year 2<br>Gain/Loss</th>
+          <th class="year-header">Year 3<br>Gain/Loss</th>
+          <th class="year-header">Year 4<br>Gain/Loss</th>
+          <th class="year-header">Year 5<br>Gain/Loss</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th><input class="gain-input" id="f-g1" type="number" value="20" oninput="calcFixed()">%</th>
+          <th><input class="gain-input" id="f-g2" type="number" value="-20" oninput="calcFixed()">%</th>
+          <th><input class="gain-input" id="f-g3" type="number" value="10" oninput="calcFixed()">%</th>
+          <th><input class="gain-input" id="f-g4" type="number" value="-15" oninput="calcFixed()">%</th>
+          <th><input class="gain-input" id="f-g5" type="number" value="50" oninput="calcFixed()">%</th>
+        </tr>
+      </thead>
+      <tbody id="fixed-tbody"></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- ===== HYBRID ===== -->
 <div id="section-hybrid" class="section">
   <div class="inputs-row">
     <div>
-    <div class="input-field capital-input-field" id="h-capital-field">
-      <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="h-capital" value="50,00,000" oninput="onCapitalInput('h-capital','h-capital-words','h-capital-field','h-capital-err'); calcHybrid()">
-      <span class="capital-words" id="h-capital-words">Fifty Lakhs Rupees</span>
-    </div>
-    <div class="capital-error" id="h-capital-err">Minimum capital contribution is ₹50 Lakhs</div>
+      <div class="input-field capital-input-field" id="h-capital-field">
+        <label>Capital Contribution (Rs.)</label>
+        <input type="text" id="h-capital" value="50,00,000" oninput="onCapitalInput('h-capital','h-capital-words','h-capital-field','h-capital-err'); calcHybrid()">
+        <span class="capital-words" id="h-capital-words">Fifty Lakhs Rupees</span>
+      </div>
+      <div class="capital-error" id="h-capital-err">Minimum capital contribution is ₹50 Lakhs</div>
     </div>
     <div class="input-field">
       <label>Management Fee (%age per annum)</label>
@@ -407,39 +409,41 @@
     </div>
   </div>
 
-  <table class="fee-table" id="hybrid-table">
-    <thead>
-      <tr>
-        <th class="col-fees-label">Fees</th>
-        <th class="year-header">Year 1<br>Gain/Loss</th>
-        <th class="year-header">Year 2<br>Gain/Loss</th>
-        <th class="year-header">Year 3<br>Gain/Loss</th>
-        <th class="year-header">Year 4<br>Gain/Loss</th>
-        <th class="year-header">Year 5<br>Gain/Loss</th>
-      </tr>
-      <tr>
-        <th></th>
-        <th><input class="gain-input" id="h-g1" type="number" value="20" oninput="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g2" type="number" value="-20" oninput="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g3" type="number" value="10" oninput="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g4" type="number" value="-15" oninput="calcHybrid()">%</th>
-        <th><input class="gain-input" id="h-g5" type="number" value="50" oninput="calcHybrid()">%</th>
-      </tr>
-    </thead>
-    <tbody id="hybrid-tbody"></tbody>
-  </table>
+  <div class="scroll-hint">&#8596; Scroll table horizontally to see all years</div>
+  <div class="table-scroll-wrapper">
+    <table class="fee-table" id="hybrid-table">
+      <thead>
+        <tr>
+          <th class="col-fees-label">Fees</th>
+          <th class="year-header">Year 1<br>Gain/Loss</th>
+          <th class="year-header">Year 2<br>Gain/Loss</th>
+          <th class="year-header">Year 3<br>Gain/Loss</th>
+          <th class="year-header">Year 4<br>Gain/Loss</th>
+          <th class="year-header">Year 5<br>Gain/Loss</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th><input class="gain-input" id="h-g1" type="number" value="20" oninput="calcHybrid()">%</th>
+          <th><input class="gain-input" id="h-g2" type="number" value="-20" oninput="calcHybrid()">%</th>
+          <th><input class="gain-input" id="h-g3" type="number" value="10" oninput="calcHybrid()">%</th>
+          <th><input class="gain-input" id="h-g4" type="number" value="-15" oninput="calcHybrid()">%</th>
+          <th><input class="gain-input" id="h-g5" type="number" value="50" oninput="calcHybrid()">%</th>
+        </tr>
+      </thead>
+      <tbody id="hybrid-tbody"></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- ===== PERFORMANCE ===== -->
 <div id="section-performance" class="section">
   <div class="inputs-row">
     <div>
-    <div class="input-field capital-input-field" id="p-capital-field">
-      <label>Capital Contribution (Rs.)</label>
-      <input type="text" id="p-capital" value="50,00,000" oninput="onCapitalInput('p-capital','p-capital-words','p-capital-field','p-capital-err'); calcPerf()">
-      <span class="capital-words" id="p-capital-words">Fifty Lakhs Rupees</span>
-    </div>
-    <div class="capital-error" id="p-capital-err">Minimum capital contribution is ₹50 Lakhs</div>
+      <div class="input-field capital-input-field" id="p-capital-field">
+        <label>Capital Contribution (Rs.)</label>
+        <input type="text" id="p-capital" value="50,00,000" oninput="onCapitalInput('p-capital','p-capital-words','p-capital-field','p-capital-err'); calcPerf()">
+        <span class="capital-words" id="p-capital-words">Fifty Lakhs Rupees</span>
+      </div>
+      <div class="capital-error" id="p-capital-err">Minimum capital contribution is ₹50 Lakhs</div>
     </div>
     <div class="input-field disabled">
       <label>Management Fee (%age per annum)</label>
@@ -468,30 +472,32 @@
     </div>
   </div>
 
-  <table class="fee-table" id="perf-table">
-    <thead>
-      <tr>
-        <th class="col-fees-label">Fees</th>
-        <th class="year-header">Year 1<br>Gain/Loss</th>
-        <th class="year-header">Year 2<br>Gain/Loss</th>
-        <th class="year-header">Year 3<br>Gain/Loss</th>
-        <th class="year-header">Year 4<br>Gain/Loss</th>
-        <th class="year-header">Year 5<br>Gain/Loss</th>
-      </tr>
-      <tr>
-        <th></th>
-        <th><input class="gain-input" id="p-g1" type="number" value="20" oninput="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g2" type="number" value="-20" oninput="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g3" type="number" value="10" oninput="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g4" type="number" value="-15" oninput="calcPerf()">%</th>
-        <th><input class="gain-input" id="p-g5" type="number" value="50" oninput="calcPerf()">%</th>
-      </tr>
-    </thead>
-    <tbody id="perf-tbody"></tbody>
-  </table>
+  <div class="scroll-hint">&#8596; Scroll table horizontally to see all years</div>
+  <div class="table-scroll-wrapper">
+    <table class="fee-table" id="perf-table">
+      <thead>
+        <tr>
+          <th class="col-fees-label">Fees</th>
+          <th class="year-header">Year 1<br>Gain/Loss</th>
+          <th class="year-header">Year 2<br>Gain/Loss</th>
+          <th class="year-header">Year 3<br>Gain/Loss</th>
+          <th class="year-header">Year 4<br>Gain/Loss</th>
+          <th class="year-header">Year 5<br>Gain/Loss</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th><input class="gain-input" id="p-g1" type="number" value="20" oninput="calcPerf()">%</th>
+          <th><input class="gain-input" id="p-g2" type="number" value="-20" oninput="calcPerf()">%</th>
+          <th><input class="gain-input" id="p-g3" type="number" value="10" oninput="calcPerf()">%</th>
+          <th><input class="gain-input" id="p-g4" type="number" value="-15" oninput="calcPerf()">%</th>
+          <th><input class="gain-input" id="p-g5" type="number" value="50" oninput="calcPerf()">%</th>
+        </tr>
+      </thead>
+      <tbody id="perf-tbody"></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- ===== NOTES ===== -->
 <div class="notes-section">
   <h3>Notes:</h3>
   <table class="notes-table">
@@ -512,7 +518,6 @@
   </table>
 </div>
 
-<!-- ===== IMPORTANT DISCLOSURES ===== -->
 <div class="disclosures-section">
   <h3>Important Disclosures:</h3>
   <table class="notes-table">
@@ -532,8 +537,6 @@
 </div>
 
 <script>
-
-
 function lbl(main, suffix) {
   if (!suffix) return main;
   return main + ' <span class="label-suffix">(' + suffix + ')</span>';
@@ -656,7 +659,6 @@ document.getElementById('feeTypeSelect').addEventListener('change', function() {
   switchTab(this.value);
 });
 
-
 var FIXED_LABELS = [
   { main: 'Capital Contributed / AUM',                          suffix: 'User Input Assumption' },
   { main: 'Gain / (Loss)',                                      suffix: 'Scenario-Based Assumption' },
@@ -680,7 +682,7 @@ var LONG_LABELS = [
   { main: 'Management Fees',                                    suffix: 'Illustrative Calculation Based on User Assumptions' },
   { main: 'Total Charges',                                      suffix: 'Aggregate Illustrative Charges' },
   { main: 'Net Portfolio Value',                                suffix: 'Indicative Value After Charges' },
-  { main: 'High Water Mark',                              suffix: 'HWM-Scheme-Specific Logic Used for Illustration Only, Not Actual Scheme Computation' },
+  { main: 'High Water Mark',                                    suffix: 'HWM-Scheme-Specific Logic Used for Illustration Only, Not Actual Scheme Computation' },
   { main: 'Hurdle Rate',                                        suffix: 'Scheme-Specific Threshold-Illustrative Assumption, Not Actual Scheme Parameter' },
   { main: 'Portfolio Value in Excess of Hurdle Rate Return',    suffix: '' },
   { main: 'Profit Share of PMS',                                suffix: 'Illustrative Performance Allocation-Not Actual Scheme Profit Distribution' },
@@ -722,16 +724,9 @@ function calcFixed() {
   var tbody = document.getElementById('fixed-tbody');
   tbody.innerHTML = '';
   var defs = [
-    { key:'i',    idx:'i',    formula:'i = a' },
-    { key:'ii',   idx:'ii',   formula:'ii = i * Scenario' },
-    { key:'iii',  idx:'iii',  formula:'iii = i + ii' },
-    { key:'iv',   idx:'iv',   formula:'iv = (iii + i) / 2' },
-    { key:'v',    idx:'v',    formula:'v = iv * c' },
-    { key:'vi',   idx:'vi',   formula:'vi = iv * f' },
-    { key:'vii',  idx:'vii',  formula:'vii = (iv + v + vi) * b' },
-    { key:'viii', idx:'viii', formula:'viii = v + vi + vii' },
-    { key:'ix',   idx:'ix',   formula:'ix = iii + viii' },
-    { key:'x',    idx:'x',    formula:'x = ((ix/i)-1)%' }
+    { key:'i' }, { key:'ii' }, { key:'iii' }, { key:'iv' },
+    { key:'v' }, { key:'vi' }, { key:'vii' }, { key:'viii' },
+    { key:'ix' }, { key:'x' }
   ];
   for (var r = 0; r < defs.length; r++) {
     var d = defs[r];
@@ -792,24 +787,11 @@ function calcHybrid() {
   var tbody = document.getElementById('hybrid-tbody');
   tbody.innerHTML = '';
   var defs = [
-    { key:'i',     idx:'i',     formula:'i = a' },
-    { key:'ii',    idx:'ii',    formula:'ii = i * Scenario' },
-    { key:'iii',   idx:'iii',   formula:'iii = i + ii' },
-    { key:'iv',    idx:'iv',    formula:'iv = (iii + i) / 2' },
-    { key:'v',     idx:'v',     formula:'v = iv * c' },
-    { key:'vi',    idx:'vi',    formula:'vi = iv * f' },
-    { key:'vii',   idx:'vii',   formula:'vii = (iv + v + vi) * b' },
-    { key:'viii',  idx:'viii',  formula:'viii = v + vi + vii' },
-    { key:'ix',    idx:'ix',    formula:'ix = iii + viii' },
-    { key:'x_hwm', idx:'x',    formula:'x = For 1st Year its i; else xviii of prev year' },
-    { key:'xi',    idx:'xi',    formula:'xi = Max(x, i) * e' },
-    { key:'xii',   idx:'xii',  formula:'xii = ix > (x+xi) ? ix-x-xi : 0' },
-    { key:'xiii',  idx:'xiii', formula:'xiii = xii * d' },
-    { key:'xiv',   idx:'xiv',  formula:'xiv = xiii' },
-    { key:'xv',    idx:'xv',   formula:"xv = xiii>0 ? 'Yes' : 'No Perf Fee'" },
-    { key:'xvi',   idx:'xvi',  formula:'xvi = ix - xiii' },
-    { key:'xvii',  idx:'xvii', formula:'xvii = (xvi/i - 1)%' },
-    { key:'xviii', idx:'xviii',formula:"xviii = xv='Yes' ? ix : max(ix,i,prev xviii)" }
+    { key:'i' }, { key:'ii' }, { key:'iii' }, { key:'iv' },
+    { key:'v' }, { key:'vi' }, { key:'vii' }, { key:'viii' },
+    { key:'ix' }, { key:'x_hwm' }, { key:'xi' }, { key:'xii' },
+    { key:'xiii' }, { key:'xiv' }, { key:'xv' }, { key:'xvi' },
+    { key:'xvii' }, { key:'xviii' }
   ];
   for (var r = 0; r < defs.length; r++) {
     var d = defs[r];
@@ -867,24 +849,11 @@ function calcPerf() {
   var tbody = document.getElementById('perf-tbody');
   tbody.innerHTML = '';
   var defs = [
-    { key:'i',     idx:'i',     formula:'i = a' },
-    { key:'ii',    idx:'ii',    formula:'ii = i * Scenario' },
-    { key:'iii',   idx:'iii',   formula:'iii = i + ii' },
-    { key:'iv',    idx:'iv',    formula:'iv = (iii + i) / 2' },
-    { key:'v',     idx:'v',     formula:'v = iv * c' },
-    { key:'vi',    idx:'vi',    formula:'vi = iv * f' },
-    { key:'vii',   idx:'vii',   formula:'vii = 0 (no mgmt fee)' },
-    { key:'viii',  idx:'viii',  formula:'viii = v + vi + vii' },
-    { key:'ix',    idx:'ix',    formula:'ix = iii + viii' },
-    { key:'x_hwm', idx:'x',    formula:'x = For 1st Year its i; else xviii of prev year' },
-    { key:'xi',    idx:'xi',    formula:'xi = Max(x, i) * e' },
-    { key:'xii',   idx:'xii',  formula:'xii = ix > (x+xi) ? ix-x-xi : 0' },
-    { key:'xiii',  idx:'xiii', formula:'xiii = xii * d' },
-    { key:'xiv',   idx:'xiv',  formula:'xiv = xiii' },
-    { key:'xv',    idx:'xv',   formula:"xv = xiii>0 ? 'Yes' : 'No Perf Fee'" },
-    { key:'xvi',   idx:'xvi',  formula:'xvi = ix - xiii' },
-    { key:'xvii',  idx:'xvii', formula:'xvii = (xvi/i - 1)%' },
-    { key:'xviii', idx:'xviii',formula:"xviii = xv='Yes' ? ix : max(ix,i,prev xviii)" }
+    { key:'i' }, { key:'ii' }, { key:'iii' }, { key:'iv' },
+    { key:'v' }, { key:'vi' }, { key:'vii' }, { key:'viii' },
+    { key:'ix' }, { key:'x_hwm' }, { key:'xi' }, { key:'xii' },
+    { key:'xiii' }, { key:'xiv' }, { key:'xv' }, { key:'xvi' },
+    { key:'xvii' }, { key:'xviii' }
   ];
   for (var r = 0; r < defs.length; r++) {
     var d = defs[r];
