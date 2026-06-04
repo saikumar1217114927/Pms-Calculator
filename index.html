@@ -185,7 +185,7 @@
     width: 28%;
   }
 
-  /* Each of 5 year columns gets equal share of remaining 72% */
+  
   table.fee-table th.year-header {
     width: 14.4%;
   }
@@ -198,7 +198,7 @@
     line-height: 1.4;
   }
 
-  /* Main label text bold, suffix in dull grey */
+  
   .label-suffix {
     color: #aaa;
     font-weight: 400;
@@ -225,7 +225,7 @@
     margin-right: 1px;
   }
 
-  /* ── Notes & Disclosures ── */
+  
   .notes-section {
     margin-top: 10px;
   }
@@ -532,9 +532,8 @@
 </div>
 
 <script>
-/* ─── helpers ─── */
 
-/* Build label HTML: main text bold/dark, suffix in dull grey only if present */
+
 function lbl(main, suffix) {
   if (!suffix) return main;
   return main + ' <span class="label-suffix">(' + suffix + ')</span>';
@@ -581,7 +580,6 @@ function cell(val, isNeg) {
   return '<td class="' + cls + '">' + fmtNum(n) + '</td>';
 }
 
-/* ─── Indian number → words ─── */
 var ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
             'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen',
             'Seventeen', 'Eighteen', 'Nineteen'];
@@ -658,8 +656,7 @@ document.getElementById('feeTypeSelect').addEventListener('change', function() {
   switchTab(this.value);
 });
 
-/* ─── Row label definitions (PMS Bazaar Final Wording) ─── */
-/* Fixed rows (10 rows: i–x) */
+
 var FIXED_LABELS = [
   { main: 'Capital Contributed / AUM',                          suffix: 'User Input Assumption' },
   { main: 'Gain / (Loss)',                                      suffix: 'Scenario-Based Assumption' },
@@ -673,7 +670,6 @@ var FIXED_LABELS = [
   { main: 'Portfolio Return %',                                 suffix: 'Indicative Return-Scenario-Based' }
 ];
 
-/* Hybrid/Perf rows (18 rows: i–xviii) */
 var LONG_LABELS = [
   { main: 'Capital Contributed / AUM',                          suffix: 'User Input Assumption' },
   { main: 'Gain / (Loss)',                                      suffix: 'Scenario-Based Assumption' },
@@ -695,7 +691,6 @@ var LONG_LABELS = [
   { main: 'High Water Mark Carried Forward',                    suffix: '' }
 ];
 
-/* ─── FIXED calc ─── */
 function calcFixed() {
   var capital  = parseAmt(document.getElementById('f-capital').value);
   if (capital < MIN_CAPITAL) capital = MIN_CAPITAL;
@@ -756,7 +751,6 @@ function calcFixed() {
   }
 }
 
-/* ─── HYBRID calc ─── */
 function calcHybrid() {
   var capital   = parseAmt(document.getElementById('h-capital').value);
   if (capital < MIN_CAPITAL) capital = MIN_CAPITAL;
@@ -833,7 +827,6 @@ function calcHybrid() {
   }
 }
 
-/* ─── PERFORMANCE calc ─── */
 function calcPerf() {
   var capital   = parseAmt(document.getElementById('p-capital').value);
   if (capital < MIN_CAPITAL) capital = MIN_CAPITAL;
@@ -909,7 +902,6 @@ function calcPerf() {
   }
 }
 
-/* ─── Initial render ─── */
 calcFixed();
 calcHybrid();
 calcPerf();
